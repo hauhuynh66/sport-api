@@ -1,5 +1,7 @@
 package com.server.config;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,6 +10,9 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.server.security.CustomAuthenticationFilter;
 import com.server.security.CustomAuthorizationFilter;
@@ -43,10 +48,12 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((request) -> {
             request
-                .requestMatchers("/api/**", "/login").permitAll()
+                .requestMatchers("/api/**/v1/**/**", "/nfl/logo/**", "/admin/login").permitAll()
                 .anyRequest().authenticated();
         });
         
+        http.cors().configurationSource(corsConfigurationSource());
+
         // Authentication and authorization filter config
         CustomAuthenticationFilter filter = new CustomAuthenticationFilter(authenticationManager());
         http.addFilter(filter);
@@ -54,4 +61,16 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8004"));
+        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
 }

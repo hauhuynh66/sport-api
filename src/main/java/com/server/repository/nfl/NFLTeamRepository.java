@@ -1,11 +1,12 @@
 package com.server.repository.nfl;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 import com.server.model.nfl.NFLTeam;
 
-@Repository
-public interface NFLTeamRepository extends MongoRepository<NFLTeam, String> {
-    
+public interface NFLTeamRepository{
+    void save(NFLTeam team);
+    boolean existsByName(String name);
+    NFLTeam findByName(String name);
+    List<NFLTeam> findAll();
 }
