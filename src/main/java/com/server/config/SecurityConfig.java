@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -48,7 +49,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((request) -> {
             request
-                .requestMatchers("/api/**/v1/**/**", "/nfl/logo/**", "/admin/login").permitAll()
+                .requestMatchers("/api/**/v1/**/**", "/nfl/logo/**").permitAll()
                 .anyRequest().authenticated();
         });
         
@@ -73,4 +74,8 @@ public class SecurityConfig {
         return source;
     }
 
+    @Bean
+    public BCryptPasswordEncoder encoder() {
+        return new BCryptPasswordEncoder(5);
+    }
 }

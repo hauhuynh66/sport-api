@@ -11,4 +11,24 @@ public class AdminController {
     public String loginForm() {
         return "login";
     }
+
+    @GetMapping("/manage")
+    public String manageList() {
+        return "manage-list";
+    }
+
+    // @GetMapping("/nfl/add")
+    // public String nflAddTeamForm() {
+    //     return "nfl/team";
+    // }
+
+    // @GetMapping("/nba/add")
+    // public String nbaAddTeamForm() {
+    //     return "nba/team";
+    // }
+
+    // @GetMapping("/mlb/add")
+    // public String mlbAddTeamForm() {
+    //     return "mlb/team";
+    // }
 }

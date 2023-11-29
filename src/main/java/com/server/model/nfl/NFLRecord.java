@@ -1,6 +1,5 @@
 package com.server.model.nfl;
 
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Getter;
@@ -15,8 +14,7 @@ import nonapi.io.github.classgraph.json.Id;
 public class NFLRecord {
     @Id
     private String id;
-
-    @Indexed
+    
     private NFLTeam team;
     
     private String season;

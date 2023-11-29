@@ -15,5 +15,5 @@ import lombok.Data;
 @ConfigurationProperties("storage")
 @Data
 public class StorageProperties {
-    private String path = "storage";
+    private String rootPath = "storage";
 }

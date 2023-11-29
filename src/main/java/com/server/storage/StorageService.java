@@ -25,7 +25,7 @@ public class StorageService implements IStorage {
     private final Path root;
     @Autowired
     public StorageService(StorageProperties properties) {
-        this.root = Paths.get(properties.getPath());
+        this.root = Paths.get(properties.getRootPath());
     }
 
     /**

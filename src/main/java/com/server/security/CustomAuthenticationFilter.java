@@ -1,6 +1,8 @@
 package com.server.security;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -8,12 +10,16 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -34,10 +40,10 @@ import lombok.extern.slf4j.Slf4j;
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     @Autowired
     private final AuthenticationManager authenticationManager;
-    //private final byte[] secret = "secret".getBytes();
-    //private final Algorithm algorithm = Algorithm.HMAC256(secret);
+    private final byte[] secret = "secret".getBytes();
+    private final Algorithm algorithm = Algorithm.HMAC256(secret);
 
-    //private static final long interval = 60*60*1000;
+    private static final long interval = 60*60*1000;
     
     /** 
      * Process login request
@@ -68,31 +74,31 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
      */
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws ServletException, IOException {
-        // CustomUserDetails user = (CustomUserDetails) authResult.getPrincipal();
+        AdminDetails user = (AdminDetails) authResult.getPrincipal();
         
-        // Date expiredTime = new Date(System.currentTimeMillis()+interval);
-        // Date refreshExpiredTime = new Date(System.currentTimeMillis()+2*interval);
+        Date expiredTime = new Date(System.currentTimeMillis()+interval);
+        Date refreshExpiredTime = new Date(System.currentTimeMillis()+2*interval);
 
-        // String accessToken = JWT.create()
-        //         .withSubject(user.getUsername())
-        //         .withExpiresAt(expiredTime)
-        //         .withIssuer(request.getRequestURL().toString())
-        //         .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-        //         .sign(algorithm);
+        String accessToken = JWT.create()
+                .withSubject(user.getUsername())
+                .withExpiresAt(expiredTime)
+                .withIssuer(request.getRequestURL().toString())
+                .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+                .sign(algorithm);
 
-        // String refreshToken = JWT.create()
-        //         .withSubject(user.getUsername()+"@refresh")
-        //         .withExpiresAt(refreshExpiredTime)
-        //         .withIssuer(request.getRequestURL().toString())
-        //         .sign(algorithm);
+        String refreshToken = JWT.create()
+                .withSubject(user.getUsername()+"@refresh")
+                .withExpiresAt(refreshExpiredTime)
+                .withIssuer(request.getRequestURL().toString())
+                .sign(algorithm);
 
-        // response.setHeader("Access-Control-Expose-Headers", "x-token, username");
-        // response.setHeader("username", user.getUsername());
-        // response.setHeader("x-token", accessToken);
+        response.setHeader("Access-Control-Expose-Headers", "x-token, username");
+        response.setHeader("username", user.getUsername());
+        response.setHeader("x-token", accessToken);
 
-        // Cookie cookie = new Cookie("refresh_token", refreshToken);
+        Cookie cookie = new Cookie("refresh_token", refreshToken);
 
-        // response.addCookie(cookie);
+        response.addCookie(cookie);
     }
 
     /**
