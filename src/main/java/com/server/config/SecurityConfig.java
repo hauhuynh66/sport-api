@@ -5,18 +5,28 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.User.UserBuilder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.server.security.CustomAuthenticationFilter;
 import com.server.security.CustomAuthorizationFilter;
+import com.server.service.user.CustomUserDetailsService;
 
 /**
  * Spring Security Config
@@ -27,16 +37,13 @@ import com.server.security.CustomAuthorizationFilter;
 @Configuration
 public class SecurityConfig {
     @Autowired
-    private AuthenticationConfiguration configuration;
-
-    /** 
-     * Authentication manager injection
-     * @return AuthenticationManager
-     * @throws Exception
-     */
+    private CustomUserDetailsService userDetailsService;
     @Bean
     public AuthenticationManager authenticationManager() throws Exception {
-        return configuration.getAuthenticationManager();
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailsService);
+		authenticationProvider.setPasswordEncoder(encoder());
+        return new ProviderManager(authenticationProvider);
     }
 
     /** 
@@ -47,18 +54,23 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((request) -> {
-            request
-                .requestMatchers("/api/**/v1/**/**", "/nfl/logo/**").permitAll()
-                .anyRequest().authenticated();
-        });
-        
+        http.csrf(csrf -> csrf.disable());
         http.cors().configurationSource(corsConfigurationSource());
 
+        http.sessionManagement((session) -> session
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        );
+
+        http.authorizeHttpRequests((request) -> {
+                    request.anyRequest().authenticated();
+            
+        });
+
         // Authentication and authorization filter config
-        CustomAuthenticationFilter filter = new CustomAuthenticationFilter(authenticationManager());
+        CustomAuthenticationFilter filter = new CustomAuthenticationFilter();
+        filter.setFilterProcessesUrl("/api/login");
         http.addFilter(filter);
-        http.addFilterBefore(new CustomAuthorizationFilter(), CustomAuthenticationFilter.class);
+        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

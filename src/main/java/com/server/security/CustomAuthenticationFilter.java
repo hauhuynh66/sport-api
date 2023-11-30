@@ -11,7 +11,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -27,7 +29,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * JWT token authentication filter
@@ -36,10 +37,10 @@ import lombok.extern.slf4j.Slf4j;
  * @version v0.0.1
  */
 @RequiredArgsConstructor
-@Slf4j
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     @Autowired
-    private final AuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager;
+
     private final byte[] secret = "secret".getBytes();
     private final Algorithm algorithm = Algorithm.HMAC256(secret);
 
@@ -57,7 +58,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         ObjectMapper mapper = new ObjectMapper();
         try {
             LoginRequest loginRequest = mapper.readValue(request.getReader(), LoginRequest.class);
-            log.info(loginRequest.toString());
             UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),loginRequest.getPassword());
             return authenticationManager.authenticate(token);
         }catch (Exception e){
@@ -74,8 +74,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
      */
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws ServletException, IOException {
-        AdminDetails user = (AdminDetails) authResult.getPrincipal();
-        
+        UserDetails user = (UserDetails) authResult.getPrincipal();
+        logger.info(user);
         Date expiredTime = new Date(System.currentTimeMillis()+interval);
         Date refreshExpiredTime = new Date(System.currentTimeMillis()+2*interval);
 
