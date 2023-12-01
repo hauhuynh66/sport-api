@@ -2,11 +2,15 @@ package com.server.repository.nfl;
 
 import java.util.List;
 
+import com.server.exception.QueryParamException;
 import com.server.model.nfl.NFLTeam;
 
 public interface NFLTeamRepository{
     void save(NFLTeam team);
-    boolean existsByName(String name);
-    NFLTeam findByName(String name);
-    List<NFLTeam> findAll();
+    NFLTeam getByName(String name);
+    List<NFLTeam> getAll();
+    List<NFLTeam> getByDivision(String division) throws QueryParamException;
+    List<NFLTeam> getByConference(String conference) throws QueryParamException;
+    List<NFLTeam> getByDivisionAndConference(String division, String conference) throws QueryParamException;
+    void clear();
 }

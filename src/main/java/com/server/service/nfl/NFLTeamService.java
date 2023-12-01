@@ -19,10 +19,10 @@ public class NFLTeamService {
     }
 
     public NFLTeam findByName(String name) {
-        return nflTeamRepository.findByName(name);
+        return nflTeamRepository.getByName(name);
     }
 
     public List<NFLTeam> findAll() {
-        return nflTeamRepository.findAll();
+        return nflTeamRepository.getAll();
     }
 }

@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,7 +29,7 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @Component
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
-    
+
     /** 
      * Filter incoming request
      * @param request
@@ -42,10 +43,8 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
         
         if(path.equals("/api/login")) {
-            logger.debug("hey");
             filterChain.doFilter(request, response);
         } else {
-            logger.info(path);
             String authorizationHeader = request.getHeader("Authorization");
             if (authorizationHeader!=null && authorizationHeader.startsWith("Bearer ")){
                 String token = authorizationHeader.substring("Bearer ".length());
@@ -60,7 +59,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                     Collection<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
 
                     for(String role : roles) {
-                        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+                        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()));
                     }
 
                     UsernamePasswordAuthenticationToken authenticationToken

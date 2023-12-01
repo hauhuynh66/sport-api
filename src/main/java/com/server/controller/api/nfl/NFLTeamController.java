@@ -11,12 +11,12 @@ import com.server.model.nfl.NFLTeam;
 import com.server.service.nfl.NFLTeamService;
 
 @RestController()
-@RequestMapping("/api/nfl/v1/team")
+@RequestMapping("/api/v1/nfl/team")
 public class NFLTeamController {
     @Autowired
     private NFLTeamService teamService;
 
-    @GetMapping("/list")
+    @GetMapping("/all")
     private List<NFLTeam> getAll() {
         return teamService.findAll();
     }
