@@ -11,6 +11,7 @@ import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +27,9 @@ enum HEADERS {
 public class NFLBatch implements CommandLineRunner {
     Logger logger = LoggerFactory.getLogger(NFLBatch.class);
 
+    @Value("${data.nfl.init}")
+    private boolean init = false;
+
     @Autowired
     private NFLTeamRepositoryImpl nflTeamRepository;
 
@@ -34,13 +38,12 @@ public class NFLBatch implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // logger.info("CLEAR NFL");
-        // nflTeamRepository.clear();
-
-        // logger.info("ADD NFL");
-        // for (NFLTeam team : getTeamList()) {
-        //     nflTeamRepository.save(team);
-        // }
+        if(init) {
+            nflTeamRepository.clear();
+            for (NFLTeam team : getTeamList()) {
+                nflTeamRepository.save(team);
+            }
+        }
     }
 
     Collection<NFLTeam> getTeamList() throws IOException {

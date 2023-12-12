@@ -24,4 +24,9 @@ public class GeoLocationService {
 
         return cityRepository.getByCountry(name, pageable);
     }
+
+    public City getByName(String asciiName) {
+
+        return cityRepository.getByName(asciiName);
+    }
 }

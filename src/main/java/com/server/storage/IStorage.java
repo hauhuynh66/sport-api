@@ -13,9 +13,6 @@ import java.nio.file.Path;
  */
 public interface IStorage {
     void init();
-    default String store(MultipartFile file){
-        return "";
-    }
     Path load(String filename);
     Resource loadAsResource(String filename);
     default void flush() {

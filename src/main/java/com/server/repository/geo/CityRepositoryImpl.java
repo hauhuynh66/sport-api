@@ -3,7 +3,6 @@ package com.server.repository.geo;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -24,7 +23,7 @@ public class CityRepositoryImpl implements CityRepository {
 
     @Override
     public List<City> getByCountry(String countryName, Pageable pageable) {
-        
+
         Query query = new Query().with(pageable);
 
         query.addCriteria(Criteria.where("country.name").is(countryName));
@@ -33,10 +32,20 @@ public class CityRepositoryImpl implements CityRepository {
     }
 
     @Override
+    public City getByName(String name) {
+
+        Query query = new Query();
+
+        query.addCriteria(Criteria.where("asciiName").regex(".*" + name + ".*", "i"));
+
+        return template.findOne(query, City.class);
+    }
+
+    @Override
     public void clear() {
         Query query = new Query();
 
         template.remove(query, "city");
     }
-    
+
 }

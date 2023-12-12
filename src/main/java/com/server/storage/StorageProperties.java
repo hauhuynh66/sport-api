@@ -16,4 +16,6 @@ import lombok.Data;
 @Data
 public class StorageProperties {
     private String rootPath = "storage";
+    
+    private String uploadPath = "upload";
 }

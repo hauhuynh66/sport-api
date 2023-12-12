@@ -23,14 +23,22 @@ public class GeoLocationController {
     @Autowired
     private ModelMapper mapper;
     
-    @GetMapping("/country")
+    @GetMapping("/list")
     private List<CityByCountry> cityInCountry(
-        @RequestParam(required = true, name = "name") String name,
+        @RequestParam(required = true, name = "country") String name,
         @RequestParam(required = false, name = "page", defaultValue = "0") int page
     ) {
         List<City> cities = geoLocationService.getByCityName(name, page);
 
         return cities.stream().map(this::removeCountry).collect(Collectors.toList());
+    }
+
+    
+    @GetMapping("/city")
+    private City cityInCountry(
+        @RequestParam(required = true, name = "name") String name
+    ) {
+        return geoLocationService.getByName(name);
     }
 
     private CityByCountry removeCountry(City city) {

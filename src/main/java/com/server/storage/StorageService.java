@@ -34,39 +34,12 @@ public class StorageService implements IStorage {
     @Override
     public void init() {
         try{
-            Files.createDirectory(root);
+            if(!root.toFile().exists()) {
+                Files.createDirectory(root);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-    
-    /** 
-     * Save file to storage
-     * @param file
-     * @return String
-     */
-    @Override
-    public String store(MultipartFile file) {
-        try{
-            if(file.isEmpty()){
-                throw new IOException("File is empty");
-            }
-            String now = String.valueOf(System.currentTimeMillis());
-            String extension = FilenameUtils.getExtension(file.getOriginalFilename());
-
-            Path des = this.root.resolve(Paths.get(now + "." + extension)).normalize().toAbsolutePath();
-            if(!des.getParent().equals(this.root.toAbsolutePath())){
-                throw new IOException("Cannot store file outside " + this.root.toAbsolutePath().toString());
-            }
-            try (InputStream is = file.getInputStream()){
-                Files.copy(is, des, StandardCopyOption.REPLACE_EXISTING);
-                
-            }
-            return des.toString();
-        }catch (IOException e){
-            return null;
-        }
-
     }
 
     /**
