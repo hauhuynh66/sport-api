@@ -2,7 +2,6 @@ package com.server.config;
 
 import java.util.Arrays;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,9 +17,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.server.security.CustomAuthenticationFilter;
-import com.server.security.CustomAuthorizationFilter;
-import com.server.service.user.CustomUserDetailsService;
+import com.server.security.JWTAuthenticationFilter;
+import com.server.security.JWTAuthorizationFilter;
 
 /**
  * Spring Security Config
@@ -30,13 +28,10 @@ import com.server.service.user.CustomUserDetailsService;
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
-
     @Bean
     public AuthenticationManager authenticationManager() throws Exception {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService);
+
 		authenticationProvider.setPasswordEncoder(encoder());
         return new ProviderManager(authenticationProvider);
     }
@@ -62,11 +57,10 @@ public class SecurityConfig {
             
         });
 
-        // Authentication and authorization filter config
-        CustomAuthenticationFilter filter = new CustomAuthenticationFilter(authenticationManager());
+        JWTAuthenticationFilter filter = new JWTAuthenticationFilter(authenticationManager());
         filter.setFilterProcessesUrl("/api/login");
         http.addFilter(filter);
-        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

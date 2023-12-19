@@ -28,7 +28,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @version v0.0.1
  */
 @Component
-public class CustomAuthorizationFilter extends OncePerRequestFilter {
+public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     /** 
      * Filter incoming request

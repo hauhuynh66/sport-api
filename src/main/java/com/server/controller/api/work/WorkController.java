@@ -23,10 +23,15 @@ public class WorkController {
     private WorkService workService;
 
     @PostMapping("/cxsast")
-    public String cxsastAvisor(@RequestParam("file") MultipartFile file) throws IOException {
+    public String cxsastAvisor(
+        @RequestParam("file") MultipartFile file,
+        @RequestParam("rs") MultipartFile resourceList
+    ) throws IOException {
         Path path = uploadStorage.store(file);
+        Path rsPath = uploadStorage.store(resourceList);
         
-        workService.fillCxSAST(path);
+        workService.fillCxSAST(path, rsPath);
+        
 
         return "OK";
     }

@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -24,8 +26,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class WorkService {
-    private static final int START_ROW = 6;
-
     private enum DataColumn {
         Vulnerability(1),
         File(2),
@@ -44,14 +44,15 @@ public class WorkService {
         Html,
         JavaScript,
         PLibrary,
+        PerlSub,
         PHPIni,
         OutOfScope,
         Other;
     }
 
     private enum Scope {
-        Kinou("http/kinou/*"),
-        Vendor("php/cakephp/app/Vendor/*"),
+        Kinou("/http/kinou/*"),
+        Vendor("/php/cakephp/app/Vendor/*"),
         Adodb("/data/module/adodb/*"),
         Calendar("/data/module/Calendar/*"),
         SOAP("/data/module/SOAP/*"),
@@ -61,7 +62,7 @@ public class WorkService {
         TempDir("/data/Template_TmpDir/*"),
         PHP5("/php/DNP/PHP5/*"),
         Tool("/_tool/*"),
-        BasicDB("basic_db/*"),
+        BasicDB("/basic_db/*"),
         CornetTool("/cornet_tools/*"),
         DebugTool("/http/dbg_tool/*"),
         CakeLib("/php/cakephp/lib/*"),
@@ -78,12 +79,13 @@ public class WorkService {
         }
     }
 
-    public boolean fillCxSAST(Path path) throws IOException {
-        Map<Integer, List<String>> workbook = this.processInput(path);
+    public boolean fillCxSAST(Path path, Path resourcePath) throws IOException {
+        Map<String, List<String>> resourceList = this.getProjectInfoFiles(resourcePath);
+        Map<Integer, List<String>> workbook = this.processInput(path, resourceList);
 
         writeData(workbook, path);
 
-
+        resourcePath.toFile().delete();
         return false;
     }
 
@@ -92,14 +94,22 @@ public class WorkService {
         Workbook workbook =  new XSSFWorkbook(fIn);
         Sheet sheet = this.getLastSheet(workbook);
         for (Integer key : data.keySet()) {
-            Cell explainCell = sheet.getRow(key).getCell(DataColumn.Explanation.index);
-            Cell typeCell = sheet.getRow(key).getCell(DataColumn.Type.index);
+            int newIndex = key;
+
+            if(key > 278 && key < 281) {
+                continue;
+            } else if(key >= 281){
+                newIndex = key + 1;
+            }
+
+            Cell explainCell = sheet.getRow(newIndex).getCell(DataColumn.Explanation.index);
+            Cell typeCell = sheet.getRow(newIndex).getCell(DataColumn.Type.index);
 
             typeCell.setCellValue(data.get(key).get(0));
             explainCell.setCellValue(data.get(key).get(1));
 
-            sheet.getRow(key).getCell(DataColumn.Creator.index).setCellValue("hauhp");;
-            sheet.getRow(key).getCell(DataColumn.DateFill.index).setCellValue(new SimpleDateFormat("yyyy/MM/dd").format(new Date()));;
+            sheet.getRow(newIndex).getCell(DataColumn.Creator.index).setCellValue("hauhp");;
+            sheet.getRow(newIndex).getCell(DataColumn.DateFill.index).setCellValue(new SimpleDateFormat("yyyy/MM/dd").format(new Date()));;
         }
         fIn.close();
 
@@ -110,7 +120,7 @@ public class WorkService {
         outputStream.close();
     }
 
-    public Map<Integer, List<String>> processInput(Path path) throws IOException {
+    public Map<Integer, List<String>> processInput(Path path, Map<String, List<String>> resouceList) throws IOException {
         FileInputStream file = new FileInputStream(path.toFile());
         int i = 0;
 
@@ -119,24 +129,39 @@ public class WorkService {
         try(Workbook workbook = new XSSFWorkbook(file)) {
             Sheet sheet = this.getLastSheet(workbook);
             i = sheet.getFirstRowNum();
+
             for (Row row : sheet) {
                 i++;
 
-                if(i >= WorkService.START_ROW) {
-                    Category category = process(row).getFirst();
-                    
-                    switch (category) {
+                if(
+                    row.getCell(DataColumn.File.index) != null &&
+                    row.getCell(DataColumn.File.index).getCellType() == CellType.STRING &&
+                    row.getCell(DataColumn.File.index).getStringCellValue().contains("/")
+                ) {
+                    Cell fileCell = row.getCell(DataColumn.File.index);
+                    String filePath = fileCell.getStringCellValue();
+
+                    Pair<Category, String> res = process(filePath);
+                    switch (res.getFirst()) {
                         case Html:
-                            data.put(i, Arrays.asList("対象外(Other)","検査対象がhtmlファイルのため、対象外"));
+                            data.put(i-1, Arrays.asList("対象外(Other)","検査対象がhtmlファイルのため、対象外"));
                             break;
                         case JavaScript:
-                            data.put(i, Arrays.asList("対象外(Javascript)","検査対象がJavascriptファイルのため、対象外"));
+                            data.put(i-1, Arrays.asList("対象外(Javascript)","検査対象がJavascriptファイルのため、対象外"));
+                            break;
+                        case PerlSub:
+                            data.put(i-1, Arrays.asList("対象外(Other)", "検査対象がperlsubライブラリのため、対象外"));
                             break;
                         case OutOfScope:
-                            String outOfScopePath = process(row).getSecond();
-                            data.put(i, Arrays.asList("対象外(Other)", "ファイルが「"+ outOfScopePath +"」にあるため、調査範囲外となる。"));
+                            data.put(i-1, Arrays.asList("対象外(Other)", "ファイルが「"+ res.getSecond() +"」にあるため、調査範囲外となる。"));
                             break;
                         default:
+                            if(isResource(filePath, resouceList.get("out"))) {
+                                data.put(i-1, Arrays.asList("対象外(Other)", "Ngoài đối tượng chuyển đổi."));
+                            } else if(!isResource(filePath,  resouceList.get("in"))) {
+                                System.out.println(filePath);
+                            }
+
                             break;
                     }
                 }
@@ -157,20 +182,20 @@ public class WorkService {
         return last;
     }
 
-    private Pair<Category, String> process(Row row) {
-        Cell file = row.getCell(DataColumn.File.index);
+    private Pair<Category, String> process(String filePath) {
         
-        String filePath = file.getStringCellValue();
         Scope s;
 
         if(filePath.endsWith("html")) {
             return Pair.of(Category.Html, "");
         } else if(filePath.endsWith("js")) {
             return Pair.of(Category.JavaScript, "");
-        } else if((s = scopeOf(filePath))!= Scope.Undefined) {
+        } else if(filePath.contains("perl/perlsub/")) {
+            return Pair.of(Category.PerlSub, "");
+        }
+        
+        else if((s = scopeOf(filePath))!= Scope.Undefined) {
             return Pair.of(Category.OutOfScope, s.path);
-        } else {
-
         }
 
         return Pair.of(Category.Other, "");
@@ -183,5 +208,46 @@ public class WorkService {
         }).findFirst();
 
         return find.isPresent() ? find.get() : Scope.Undefined;
+    }
+
+    private Map<String, List<String>> getProjectInfoFiles(Path path) throws IOException {
+        FileInputStream file = new FileInputStream(path.toFile());
+        Map<String, List<String>> data = new HashMap<>();
+
+        List<String> in = new ArrayList<>();
+        List<String> out = new ArrayList<>();
+
+        try(Workbook workbook = new XSSFWorkbook(file)) {
+            Sheet sheet = workbook.getSheet("調査シート (20220628再)");
+            for (Row row : sheet) {
+                if(row.getCell(2) == null) {
+                    continue;
+                }
+                
+                if(row.getCell(2).getCellType() == CellType.STRING && row.getCell(2).getStringCellValue().contains("/")) {
+                    if(row.getCell(0).getStringCellValue().equals("〇")) {
+                        out.add(row.getCell(2).getStringCellValue());
+                    } else {
+                        in.add(row.getCell(2).getStringCellValue());
+                    }
+                    
+                }
+            }
+
+            data.put("out", out);
+            data.put("in", in);
+        }
+
+        return data;
+    }
+
+    private boolean isResource(String fileName, List<String> list) {
+        for (String file : list) {
+            if(file.contains(fileName)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
