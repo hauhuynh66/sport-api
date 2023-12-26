@@ -20,6 +20,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -91,25 +92,28 @@ public class WorkService {
 
     public void writeData(Map<Integer, List<String>> data, Path path) throws IOException {
         FileInputStream fIn = new FileInputStream(path.toFile());
+        
         Workbook workbook =  new XSSFWorkbook(fIn);
         Sheet sheet = this.getLastSheet(workbook);
+        List<Integer> merged = new ArrayList<>();
+
+        for(CellRangeAddress range : sheet.getMergedRegions()) {
+            merged.add(range.getFirstRow());
+            System.out.println(range.getFirstRow());
+        }
+        
         for (Integer key : data.keySet()) {
-            int newIndex = key;
+            // if(merged.contains(key)) {
 
-            if(key > 278 && key < 281) {
-                continue;
-            } else if(key >= 281){
-                newIndex = key + 1;
-            }
-
-            Cell explainCell = sheet.getRow(newIndex).getCell(DataColumn.Explanation.index);
-            Cell typeCell = sheet.getRow(newIndex).getCell(DataColumn.Type.index);
+            // }
+            Cell explainCell = sheet.getRow(key).getCell(DataColumn.Explanation.index);
+            Cell typeCell = sheet.getRow(key).getCell(DataColumn.Type.index);
 
             typeCell.setCellValue(data.get(key).get(0));
             explainCell.setCellValue(data.get(key).get(1));
 
-            sheet.getRow(newIndex).getCell(DataColumn.Creator.index).setCellValue("hauhp");;
-            sheet.getRow(newIndex).getCell(DataColumn.DateFill.index).setCellValue(new SimpleDateFormat("yyyy/MM/dd").format(new Date()));;
+            sheet.getRow(key).getCell(DataColumn.Creator.index).setCellValue("hauhp");;
+            sheet.getRow(key).getCell(DataColumn.DateFill.index).setCellValue(new SimpleDateFormat("yyyy/MM/dd").format(new Date()));;
         }
         fIn.close();
 
@@ -123,17 +127,18 @@ public class WorkService {
     public Map<Integer, List<String>> processInput(Path path, Map<String, List<String>> resouceList) throws IOException {
         FileInputStream file = new FileInputStream(path.toFile());
         int i = 0;
-
         Map<Integer, List<String>> data = new HashMap<>();
+        List<Integer> merged = new ArrayList<>();
 
         try(Workbook workbook = new XSSFWorkbook(file)) {
             Sheet sheet = this.getLastSheet(workbook);
-            i = sheet.getFirstRowNum();
+            for(CellRangeAddress range : sheet.getMergedRegions()) {
+                merged.add(range.getFirstRow());
+            }
 
             for (Row row : sheet) {
-                i++;
-
                 if(
+                    !merged.contains(i) &&
                     row.getCell(DataColumn.File.index) != null &&
                     row.getCell(DataColumn.File.index).getCellType() == CellType.STRING &&
                     row.getCell(DataColumn.File.index).getStringCellValue().contains("/")
@@ -144,27 +149,31 @@ public class WorkService {
                     Pair<Category, String> res = process(filePath);
                     switch (res.getFirst()) {
                         case Html:
-                            data.put(i-1, Arrays.asList("対象外(Other)","検査対象がhtmlファイルのため、対象外"));
+                            data.put(i, Arrays.asList("対象外(Other)","検査対象がhtmlファイルのため、対象外"));
                             break;
                         case JavaScript:
-                            data.put(i-1, Arrays.asList("対象外(Javascript)","検査対象がJavascriptファイルのため、対象外"));
+                            data.put(i, Arrays.asList("対象外(Javascript)","検査対象がJavascriptファイルのため、対象外"));
                             break;
                         case PerlSub:
-                            data.put(i-1, Arrays.asList("対象外(Other)", "検査対象がperlsubライブラリのため、対象外"));
+                            data.put(i, Arrays.asList("対象外(Other)", "検査対象がperlsubライブラリのため、対象外"));
                             break;
                         case OutOfScope:
-                            data.put(i-1, Arrays.asList("対象外(Other)", "ファイルが「"+ res.getSecond() +"」にあるため、調査範囲外となる。"));
+                            data.put(i, Arrays.asList("対象外(Other)", "ファイルが「"+ res.getSecond() +"」にあるため、調査範囲外となる。"));
                             break;
                         default:
                             if(isResource(filePath, resouceList.get("out"))) {
-                                data.put(i-1, Arrays.asList("対象外(Other)", "Ngoài đối tượng chuyển đổi."));
-                            } else if(!isResource(filePath,  resouceList.get("in"))) {
-                                System.out.println(filePath);
+                                data.put(i, Arrays.asList("対象外(Other)", "Ngoài đối tượng chuyển đổi."));
+                            } else {
+                                if(!isResource(filePath,  resouceList.get("in"))) {
+                                    System.out.println(filePath);
+                                }
+                                 data.put(i, Arrays.asList("未確認", ""));
                             }
 
                             break;
                     }
                 }
+                i++;
             }
         }
         
