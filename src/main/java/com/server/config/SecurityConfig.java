@@ -52,15 +52,14 @@ public class SecurityConfig {
         );
 
         http.authorizeHttpRequests((request) -> {
-                    request.requestMatchers("/api/**").authenticated()
-                            .anyRequest().permitAll();
+                    request.anyRequest().permitAll();
             
         });
 
-        JWTAuthenticationFilter filter = new JWTAuthenticationFilter(authenticationManager());
-        filter.setFilterProcessesUrl("/api/login");
-        http.addFilter(filter);
-        http.addFilterBefore(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        // JWTAuthenticationFilter filter = new JWTAuthenticationFilter(authenticationManager());
+        // filter.setFilterProcessesUrl("/api/login");
+        // http.addFilter(filter);
+        // http.addFilterBefore(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

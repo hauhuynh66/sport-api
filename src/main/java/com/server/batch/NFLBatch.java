@@ -65,7 +65,7 @@ public class NFLBatch implements CommandLineRunner {
                 record.get(HEADERS.Abbreviation),
                 record.get(HEADERS.Division),
                 record.get(HEADERS.Conference),
-                ""
+                "http://localhost:8002/nfl/logo/" + record.get(HEADERS.ShortName) + ".svg"
             ));
         }
 

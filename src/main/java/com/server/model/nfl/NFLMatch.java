@@ -13,5 +13,11 @@ public class NFLMatch {
     @Id
     private String id;
 
-    
+    private String homeTeam;
+    private String awayTeam;
+
+    private Integer homeScore;
+    private Integer awayScore;
+
+    private String date;
 }
