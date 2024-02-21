@@ -31,6 +31,12 @@ public class NFLTeam {
 
     private String conference;
 
+    private String established;
+
+    private String owner;
+
+    private String stadium;
+
     private String logoUrl;
 
     public NFLTeam(String name, String fullName, String abbreviation, String division, String conference, String logoUrl) {

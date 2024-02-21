@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <title>Menu</title>
+        <link rel="stylesheet" th:href="@{/admin/css/main.css}">
+    </head>
+    <body>
+        <table>
+            <tbody>
+                <tr th:each="menu : ${menus}">
+                    <th>
+                        <a th:href="${menu.key} + '/menu'" th:text="${menu.value}"/>
+                    </th>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+    <script th:href="@{/admin/js/main.js}"></script>
+</html>

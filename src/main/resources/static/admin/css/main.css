@@ -1,0 +1,57 @@
+body {
+    padding: 10px;
+}
+
+.wrapper {
+    width: 100%;
+    height: 100%;
+}
+
+.logo-wrapper {
+    width: 100%;
+    height: 100px;
+}
+
+.logo {
+    height: 100%;
+    aspect-ratio: 1/1;
+    object-fit: fill;
+}
+
+.group {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.jst-center {
+    justify-content: center;
+}
+
+.stack {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+.menu-item {
+    width: 100%;
+    height: 50px;
+}
+
+.gap-xs {
+    gap: 10px;
+}
+
+.gap-md {
+    gap: 20px;
+}
+
+.gap-ld {
+    gap: 40px;
+}
+
+.gap-xl {
+    gap: 40px;
+}

@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
+import com.server.exception.NoRecordException;
 import com.server.exception.QueryParamException;
 import com.server.model.nfl.NFLTeam;
 
@@ -22,19 +23,27 @@ public class NFLTeamRepositoryImpl implements NFLTeamRepository {
 
     @Override
     public void save(NFLTeam team) {
-        if(getByName(team.getName()) != null) {
-            return;
+        try {
+            if(getByName(team.getName()) != null) {
+                return;
+            }
+        } catch(NoRecordException e) {
+            
         }
 
         template.save(team);
     }
 
     @Override
-    public NFLTeam getByName(String name) {
+    public NFLTeam getByName(String name) throws NoRecordException {
         Query query = new Query();
         query.addCriteria(Criteria.where("name").is(name));
+        NFLTeam team = template.findOne(query, NFLTeam.class);
+        if(team == null) {
+            throw new NoRecordException("");
+        } 
 
-        return template.findOne(query, NFLTeam.class);
+        return team;
     }
 
     @Override
