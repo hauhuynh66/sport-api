@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/admin/geo")
 public class GeoAdminController {
-    private static Map<String, String> menus = Map.of();
+   private static Map<String, String> menus = Map.of("countries", "Countries", "cities", "Cities");
 
    @GetMapping("/menu")
    public String menu(Model model) {

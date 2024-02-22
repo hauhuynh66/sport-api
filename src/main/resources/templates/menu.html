@@ -1,20 +1,22 @@
 <html>
     <head>
-        <title>Menu</title>
+        <title>Admin Menu</title>
         <link rel="stylesheet" th:href="@{/admin/css/main.css}">
     </head>
     <body>
         <div class="wrapper stack gap-md">
             <!-- LOGO -->
-            <div class="logo-wrapper group jst-center">
+            <div class="logo-wrapper group jst-center aln-center">
                 <img class="logo" th:src="@{/admin/img/cogs.svg}">
             </div>
             <!-- /LOGO -->
             <!-- MENU -->
-            <div class="menu-item" th:each="menu : ${menus}">
-                <a th:href="${menu.key} + '/menu'">
-                    <button class="wrapper" th:text="${menu.value}"/>
-                </a>
+            <div class="wrapper stack gap-md jst-center">
+                <div class="menu-item" th:each="menu : ${menus}">
+                    <a th:href="${menu.key} + '/menu'">
+                        <button class="wrapper" th:text="${menu.value}"/>
+                    </a>
+                </div>
             </div>
             <!-- /MENU -->
         </table>
