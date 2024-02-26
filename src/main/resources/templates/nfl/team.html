@@ -1,10 +1,37 @@
 <html>
     <head>
-        <title>NFL Team</title>
+        <title>NFL Teams</title>
+        <link rel="stylesheet" th:href="@{/admin/css/main.css}">
     </head>
     <body>
-        <table>
-
-        </table>
+        <div class="wrapper stack gap-md aln-center">
+            <p class="fnt-xl">NFL Team List</p>
+            <table class="wrapper">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Logo</th>
+                        <th>Conference</th>
+                        <th>Division</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="team : ${teams}">
+                        <th th:text="${team.fullName}"/>
+                        <th>
+                            <img th:src="${team.logoUrl}" class="team-logo">
+                        </th>
+                        <th th:text="${team.conference}">
+                        <th th:text="${team.division}">
+                        <th>
+                            <button>
+                                <a th:href="'team/' + ${team.name}">Edit
+                            </button>
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </body>
 </html>

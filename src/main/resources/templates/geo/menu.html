@@ -4,16 +4,16 @@
         <link rel="stylesheet" th:href="@{/admin/css/main.css}">
     </head>
     <body>
-        <div class="wrapper stack gap-md">
+        <div class="wrapper stack gap-md aln-center">
             <!-- LOGO -->
             <div class="logo-wrapper group jst-center aln-center">
                 <img class="logo" th:src="@{/admin/img/cogs.svg}">
             </div>
             <!-- /LOGO -->
             <!-- MENU -->
-            <div class="wrapper stack gap-md jst-center">
+            <div class="menu-wrapper stack gap-md jst-center">
                 <div class="menu-item" th:each="menu : ${menus}">
-                    <a th:href="${menu.key} + '/menu'">
+                    <a th:href="${menu.key}">
                         <button class="wrapper" th:text="${menu.value}"/>
                     </a>
                 </div>

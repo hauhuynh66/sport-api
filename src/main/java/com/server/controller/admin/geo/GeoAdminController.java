@@ -17,4 +17,16 @@ public class GeoAdminController {
       model.addAttribute("menus", menus);
       return "/geo/menu";
    }
+
+   @GetMapping("/cities")
+   public String cities(Model model) {
+      model.addAttribute("menus", menus);
+      return "/geo/city";
+   }
+
+   @GetMapping("/countries")
+   public String clountries(Model model) {
+      model.addAttribute("menus", menus);
+      return "/geo/country";
+   }
 }

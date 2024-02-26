@@ -1,10 +1,40 @@
 <html>
     <head>
-        <title>NFL Schedule</title>
+        <title>NFL Teams</title>
+        <link rel="stylesheet" th:href="@{/admin/css/main.css}">
     </head>
     <body>
-        <table>
-
-        </table>
+        <div class="wrapper stack gap-md aln-center">
+            <p class="fnt-xl">NFL Match History</p>
+            <table class="wrapper">
+                <thead>
+                    <tr>
+                        <th>Home</th>
+                        <th>Away</th>
+                        <th>Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="match : ${matches}">   
+                        <th>
+                            <span th:text="${#strings.capitalize(match.homeTeam)}"/>
+                            <p th:text="${match.homeScore}"></p>
+                        </th>
+                        <th>
+                            <span th:text="${#strings.capitalize(match.awayTeam)}"/>
+                            <p th:text="${match.awayScore}"></p>
+                        </th>
+                        <th th:text="${match.date}"/>
+                        <th>
+                            <button>Detail</button>
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
+            <button>
+                <a th:href="@{/add}"/> Add Schedule
+            </button>
+        </div>
     </body>
 </html>

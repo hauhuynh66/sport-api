@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <title>NFL Teams</title>
+        <link rel="stylesheet" th:href="@{/admin/css/main.css}">
+    </head>
+    <body>
+        <div class="wrapper stack aln-center">
+            <form class="form-wrapper">
+                <div class="form-field">
+                    <label for="name">Name</label>
+                    <input name="name" th:value="${info.name}">
+                </div>
+                <div class="form-field">
+                    <label for="abb">Abbreviation</label>
+                    <input name="abb" th:value="${info.abbreviation}">
+                </div>
+                <div class="form-field">
+                    <label for="division">Division</label>
+                    <input name="division" th:value="${info.division}">
+                </div>
+                <div class="form-field">
+                    <label for="conference">Conference</label>
+                    <input name="conference" th:value="${info.conference}">
+                </div>
+            </form>
+        </div>
+    </body>
+</html>

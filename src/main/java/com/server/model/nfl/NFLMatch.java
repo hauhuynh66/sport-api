@@ -3,7 +3,6 @@ package com.server.model.nfl;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,9 +24,9 @@ public class NFLMatch {
     private String season;
     private String stadium;
 
-    public NFLMatch(String home, String away, int homeScore, int awayScore, String date, String stadium, int week, String season) {
-        this.homeTeam = home;
-        this.awayTeam = away;
+    public NFLMatch(String homeTeam, String awayTeam, int homeScore, int awayScore, String date, String stadium, int week, String season) {
+        this.homeTeam = homeTeam;
+        this.awayTeam = awayTeam;
         this.homeScore = homeScore;
         this.awayScore = awayScore;
         this.date = date;
