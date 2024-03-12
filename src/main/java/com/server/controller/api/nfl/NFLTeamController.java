@@ -38,6 +38,4 @@ public class NFLTeamController {
     ) throws NoRecordException {
         return teamService.findByName(name);
     }
-
-    
 }

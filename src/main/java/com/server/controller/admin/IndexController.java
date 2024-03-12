@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/admin")
 public class IndexController {
-    private static Map<String, String> menus = Map.of("nfl", "NFL", "geo", "Geographic", "dict", "Dictionary");
+    private final static String iconPath = "/admin/img/cogs.svg";
+    private static Map<String, String> menus = Map.of("nfl", "NFL", "geo", "Geographic", "dict", "Dictionary", "doggo", "Dog Breeds");
 
     @GetMapping("/menu")
     public String menu(Model model) {
+        model.addAttribute("icon", iconPath);
         model.addAttribute("menus", menus);
         return "menu";
     }

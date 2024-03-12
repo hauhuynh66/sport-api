@@ -1,0 +1,42 @@
+<html>
+    <head>
+        <title>NFL Teams</title>
+        <th:block th:replace="~{fragment/header::header}"></th:block>
+    </head>
+    <body>
+        <div class="row justify-content-center m-0">
+            <div class="col-12 col-xl-9 vh-100 d-flex flex-column">
+                <div class="row m-0 h-100">
+                    <div class="col-6 d-flex flex-column align-items-center gap-3">
+                        <img style="width: 200px;aspect-ratio: 1/1;" th:src="${info.logoUrl}" />
+                        <p class="font-md" th:text="${#strings.capitalize(info.fullName)}"></p>
+                    </div>
+                    <div class="col-6 d-flex flex-column align-items-center">
+                        <table style="width: 100%;" class="format-table pt-3">
+                            <tbody>
+                                <tr>
+                                    <td>Established</td>
+                                    <td th:text="${info.established}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Owner</td>
+                                    <td th:text="${info.owner}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Conference</td>
+                                    <td th:text="${info.conference}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Division</td>
+                                    <td th:text="${info.division}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <th:block th:replace="~{fragment/footer::footer}"></th:block>
+            </div>
+        </div>
+    </body>
+    <th:block th:replace="~{fragment/header::script}"></th:block>
+</html>

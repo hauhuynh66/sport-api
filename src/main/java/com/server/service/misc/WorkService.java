@@ -99,20 +99,16 @@ public class WorkService {
 
         for(CellRangeAddress range : sheet.getMergedRegions()) {
             merged.add(range.getFirstRow());
-            System.out.println(range.getFirstRow());
         }
         
         for (Integer key : data.keySet()) {
-            // if(merged.contains(key)) {
-
-            // }
             Cell explainCell = sheet.getRow(key).getCell(DataColumn.Explanation.index);
             Cell typeCell = sheet.getRow(key).getCell(DataColumn.Type.index);
 
             typeCell.setCellValue(data.get(key).get(0));
             explainCell.setCellValue(data.get(key).get(1));
 
-            sheet.getRow(key).getCell(DataColumn.Creator.index).setCellValue("hauhp");;
+            sheet.getRow(key).getCell(DataColumn.Creator.index).setCellValue("Hauhp");;
             sheet.getRow(key).getCell(DataColumn.DateFill.index).setCellValue(new SimpleDateFormat("yyyy/MM/dd").format(new Date()));;
         }
         fIn.close();
@@ -145,6 +141,7 @@ public class WorkService {
                 ) {
                     Cell fileCell = row.getCell(DataColumn.File.index);
                     String filePath = fileCell.getStringCellValue();
+                    filePath = filePath.substring(filePath.indexOf("/"));
 
                     Pair<Category, String> res = process(filePath);
                     switch (res.getFirst()) {
@@ -167,7 +164,7 @@ public class WorkService {
                                 if(!isResource(filePath,  resouceList.get("in"))) {
                                     System.out.println(filePath);
                                 }
-                                 data.put(i, Arrays.asList("未確認", ""));
+                                data.put(i, Arrays.asList("未確認", ""));
                             }
 
                             break;
@@ -225,19 +222,22 @@ public class WorkService {
 
         List<String> in = new ArrayList<>();
         List<String> out = new ArrayList<>();
+        String regex = "c00[0-9]{5}";
 
         try(Workbook workbook = new XSSFWorkbook(file)) {
-            Sheet sheet = workbook.getSheet("調査シート (20220628再)");
+            Sheet sheet = workbook.getSheet("調査シート");
             for (Row row : sheet) {
                 if(row.getCell(2) == null) {
                     continue;
                 }
                 
                 if(row.getCell(2).getCellType() == CellType.STRING && row.getCell(2).getStringCellValue().contains("/")) {
+                    String[] parts = row.getCell(2).getStringCellValue().split(regex);
+                    
                     if(row.getCell(0).getStringCellValue().equals("〇")) {
-                        out.add(row.getCell(2).getStringCellValue());
+                        out.add(parts[1]);
                     } else {
-                        in.add(row.getCell(2).getStringCellValue());
+                        in.add(parts[1]);
                     }
                     
                 }

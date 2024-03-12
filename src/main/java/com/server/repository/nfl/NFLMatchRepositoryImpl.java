@@ -21,6 +21,13 @@ public class NFLMatchRepositoryImpl implements NFLMatchRepository {
     }
 
     @Override
+    public NFLMatch getById(String id) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(id));
+        return template.findOne(query, NFLMatch.class);
+    }
+
+    @Override
     public List<NFLMatch> getSchedule(String season) {
         Query query = new Query();
         query.addCriteria(Criteria.where("season").is(season));

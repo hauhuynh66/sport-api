@@ -1,25 +1,37 @@
-<html>
+<html lang="en">
     <head>
         <title>Admin Menu</title>
-        <link rel="stylesheet" th:href="@{/admin/css/main.css}">
+        <th:block th:replace="~{fragment/header::header}"></th:block>
     </head>
     <body>
-        <div class="wrapper stack gap-md aln-center">
-            <!-- LOGO -->
-            <div class="logo-wrapper group jst-center">
-                <img class="logo" th:src="@{/admin/img/cogs.svg}">
-            </div>
-            <!-- /LOGO -->
-            <!-- MENU -->
-            <div class="menu-wrapper stack gap-md">
-                <div class="menu-item" th:each="menu : ${menus}">
-                    <a th:href="${menu.key} + '/menu'">
-                        <button class="wrapper" th:text="${menu.value}"/>
-                    </a>
+        <div class="row vh-100 justify-content-center px-4">
+            <div class="col-xl-9 col-12 h-100 d-flex flex-column align-items-center gap-3">
+                <!-- LOGO -->
+                <div class="w-100 h-25 d-flex flex-row justify-content-center">
+                    <img style="width: 150px;aspect-ratio: 1/1;" th:src="${icon}">
                 </div>
+                <!-- /LOGO -->
+                <!-- MENU -->
+                <div class="w-100 h-75 d-flex flex-column gap-3 justify-content-center">
+                    <div class="w-100" style="height: 50px" th:each="menu : ${menus}">
+                        <th:block th:if="${menu.key} != 'doggo'">
+                            <a th:href="${menu.key} + '/menu'">
+                                <button class="w-100 h-100" th:text="${menu.value}"/>
+                            </a>
+                        </th:block>
+                        <th:block th:unless="${menu.key != 'doggo'}">
+                            <a th:href="${menu.key}">
+                                <button class="w-100 h-100" th:text="${menu.value}"/>
+                            </a>
+                        </th:block>
+                    </div>
+                </div>
+                <!-- /MENU -->
+                <th:block th:replace="~{fragment/footer::footer}"></th:block>
             </div>
-            <!-- /MENU -->
-        </table>
+        </div>
     </body>
-    <script th:href="@{/admin/js/main.js}"></script>
+    <th:block th:replace="~{fragment/header::script}">
+
+    </th:block>
 </html>

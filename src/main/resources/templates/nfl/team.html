@@ -1,37 +1,41 @@
-<html>
+<html lang="en">
     <head>
         <title>NFL Teams</title>
-        <link rel="stylesheet" th:href="@{/admin/css/main.css}">
+        <th:block th:replace="~{fragment/header::header}"></th:block>
     </head>
     <body>
-        <div class="wrapper stack gap-md aln-center">
-            <p class="fnt-xl">NFL Team List</p>
-            <table class="wrapper">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Logo</th>
-                        <th>Conference</th>
-                        <th>Division</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="team : ${teams}">
-                        <th th:text="${team.fullName}"/>
-                        <th>
-                            <img th:src="${team.logoUrl}" class="team-logo">
-                        </th>
-                        <th th:text="${team.conference}">
-                        <th th:text="${team.division}">
-                        <th>
-                            <button>
-                                <a th:href="'team/' + ${team.name}">Edit
-                            </button>
-                        </th>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="row justify-content-center m-0">
+            <div class="col-xl-9 col-12 d-flex flex-column gap-3 py-3">
+                <p class="font-lg">NFL Team List</p>
+                <table class="w-100 h-100 data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%;">Name</th>
+                            <th>Logo</th>
+                            <th>Conference</th>
+                            <th>Division</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody style="text-align: center;">
+                        <tr th:each="team : ${teams}">
+                            <td th:text="${team.fullName}"/>
+                            <td><img th:src="${team.logoUrl}" class="logo"></td>
+                            <td th:text="${team.conference}">
+                            <td th:text="${team.division}">
+                            <td>
+                                <a style="width: 40px;" th:href="'team/' + ${team.name}">
+                                    <button >
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <th:block th:replace="~{fragment/footer::footer}"></th:block>
         </div>
     </body>
+    <th:block th:replace="~{fragment/header::script}"></th:block>
 </html>

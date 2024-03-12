@@ -6,6 +6,7 @@ import com.server.model.nfl.NFLMatch;
 
 public interface NFLMatchRepository {
     void save(NFLMatch match);
+    NFLMatch getById(String id);
     List<NFLMatch> getSchedule(String season);
     List<NFLMatch> getByTeamAndSeason(String team, String season);
     List<NFLMatch> getByMatchupAndSeason(String team1, String team2, String season);

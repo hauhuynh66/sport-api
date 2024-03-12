@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/admin/geo")
 public class GeoAdminController {
+   private final static String iconPath = "/admin/img/globe.svg";
    private static Map<String, String> menus = Map.of("countries", "Countries", "cities", "Cities");
 
    @GetMapping("/menu")
    public String menu(Model model) {
+      model.addAttribute("icon", iconPath);
       model.addAttribute("menus", menus);
       return "/geo/menu";
    }

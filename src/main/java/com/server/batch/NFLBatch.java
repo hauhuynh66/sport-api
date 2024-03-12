@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -24,15 +26,15 @@ import com.server.repository.nfl.NFLTeamRepositoryImpl;
 import com.server.storage.StorageService;
 
 enum TEAM_HEADERS {
-    ShortName,Name,Abbreviation,Conference,Division
+    ShortName, Name, Abbreviation, Conference, Division, Established, Owner
 }
 
 enum MATCH_HEADERS {
-    Home,Away,HomeScore,AwayScore,Stadium,Date,Week,Round,Season
+    Home, Away, HomeScore, AwayScore, Stadium, Date, Week, Round, Season
 }
 
 enum STADIUM_HEADERS {
-    Name,Capacity,Location,Team,Opened
+    Name, Capacity, Location, Team, Opened
 }
 
 @Component
@@ -85,11 +87,12 @@ public class NFLBatch implements CommandLineRunner {
         Iterable<CSVRecord> records = csvFormat.parse(new FileReader(file));
 
         for (CSVRecord record : records) {
+            List<String> team = Arrays.asList(record.get(STADIUM_HEADERS.Team).split(";"));
             stadiums.add(new NFLStadium(
                 record.get(STADIUM_HEADERS.Name),
                 Long.parseLong(record.get(STADIUM_HEADERS.Capacity)),
                 record.get(STADIUM_HEADERS.Location),
-                record.get(STADIUM_HEADERS.Team),
+                team,
                 record.get(STADIUM_HEADERS.Opened)
             ));
         }
@@ -116,7 +119,9 @@ public class NFLBatch implements CommandLineRunner {
                 record.get(TEAM_HEADERS.Abbreviation),
                 record.get(TEAM_HEADERS.Division),
                 record.get(TEAM_HEADERS.Conference),
-                "http://localhost:8002/nfl/logo/" + record.get(TEAM_HEADERS.ShortName) + ".svg"
+                "http://localhost:8002/nfl/logo/" + record.get(TEAM_HEADERS.ShortName) + ".svg",
+                Integer.parseInt(record.get(TEAM_HEADERS.Established)),
+                record.get(TEAM_HEADERS.Owner)
             ));
         }
 

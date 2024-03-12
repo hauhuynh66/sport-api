@@ -31,20 +31,20 @@ public class NFLTeam {
 
     private String conference;
 
-    private String established;
+    private int established;
 
     private String owner;
 
-    private String stadium;
-
     private String logoUrl;
 
-    public NFLTeam(String name, String fullName, String abbreviation, String division, String conference, String logoUrl) {
+    public NFLTeam(String name, String fullName, String abbreviation, String division, String conference, String logoUrl, int established, String owner) {
         this.name = name;
         this.fullName = fullName;
         this.abbreviation = abbreviation;
         this.division = division;
         this.conference = conference;
         this.logoUrl = logoUrl;
+        this.established = established;
+        this.owner = owner;
     }
 }

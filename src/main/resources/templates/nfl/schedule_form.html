@@ -1,0 +1,35 @@
+<html lang="en">
+    <head>
+        <title>NFL Schedule</title>
+        <th:block th:replace="~{fragment/header::header}"></th:block>
+    </head>
+    <body>
+        <div class="row vh-100 justify-content-center px-4 m-0">
+            <div class="col-xl-9 col-12 h-100 d-flex flex-column align-items-center gap-3">
+                <div class="w-100 h-100">
+                    <div th:if="${mode == 1}">
+
+                    </div>
+                    <div th:if="${mode == 2}">
+                        <form action="#" method="post">
+                            <select name="homeTeam">
+                                <option value="">-----------------</option>
+                                <th:block th:each="team : ${dropdown}">
+                                    <option th:text="${team.key}" th:value="${team.value}"></option>
+                                </th:block>
+                            </select>
+                            <select name="awayTeam">
+                                <option value="">-----------------</option>
+                                <th:block th:each="team : ${dropdown}">
+                                    <option th:text="${team.key}" th:value="${team.value}"></option>
+                                </th:block>
+                            </select>
+                        </form>
+                    </div>
+                </div>
+                <th:block th:replace="~{fragment/footer::footer}"></th:block>
+            </div>
+        </div>
+    </body>
+    <th:block th:replace="~{fragment/header::script}"></th:block>
+</html>

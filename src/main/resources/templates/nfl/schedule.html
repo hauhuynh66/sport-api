@@ -1,40 +1,51 @@
-<html>
+<html lang="en">
     <head>
-        <title>NFL Teams</title>
-        <link rel="stylesheet" th:href="@{/admin/css/main.css}">
+        <title>NFL Schedule</title>
+        <th:block th:replace="~{fragment/header::header}"></th:block>
     </head>
     <body>
-        <div class="wrapper stack gap-md aln-center">
-            <p class="fnt-xl">NFL Match History</p>
-            <table class="wrapper">
-                <thead>
-                    <tr>
-                        <th>Home</th>
-                        <th>Away</th>
-                        <th>Date</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="match : ${matches}">   
-                        <th>
-                            <span th:text="${#strings.capitalize(match.homeTeam)}"/>
-                            <p th:text="${match.homeScore}"></p>
-                        </th>
-                        <th>
-                            <span th:text="${#strings.capitalize(match.awayTeam)}"/>
-                            <p th:text="${match.awayScore}"></p>
-                        </th>
-                        <th th:text="${match.date}"/>
-                        <th>
-                            <button>Detail</button>
-                        </th>
-                    </tr>
-                </tbody>
-            </table>
-            <button>
-                <a th:href="@{/add}"/> Add Schedule
-            </button>
+        <div class="row justify-content-center m-0">
+            <div class="col-xl-9 col-12 d-flex flex-column gap-3 py-3">
+                <p class="font-lg">NFL Match History</p>
+                <table class="w-100 h-100 data-table">
+                    <thead>
+                        <tr>
+                            <th>Home</th>
+                            <th>Away</th>
+                            <th>Date</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody style="text-align: center;">
+                        <tr th:each="match : ${matches}">   
+                            <td>
+                                <img th:src="${logos.get(match.homeTeam)}" style="width: 80px; aspect-ratio: 1/1;"/>
+                                <p th:text="${match.homeScore}" th:class="'font-lg ' + ${match.homeScore > match.awayScore ? 'text-danger' : ''}"></p>
+                            </td>
+                            <td>
+                                <img th:src="${logos.get(match.awayTeam)}" style="width: 80px; aspect-ratio: 1/1;"/>
+                                <p th:text="${match.awayScore}" th:class="'font-lg ' + ${match.homeScore < match.awayScore ? 'text-danger' : ''}"></p>
+                            </td>
+                            <td th:text="${match.date}" style="font-weight: bold; font-style: italic;" />
+                            <td>
+                                <a th:href="@{'/admin/nfl/schedule/info?id=' + ${match.id}}">
+                                    <button style="width: 40px;">
+                                        <i class="fas fa-magnifying-glass"></i>
+                                    </button>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <a th:href="@{'/admin/nfl/schedule/add'}">
+                    <button class="d-flex justify-content-center align-items-center w-100 gap-3">
+                        <i class="fas fa-calendar-plus"></i>
+                        <span>Add Match History</span>
+                    </button>
+                </a>
+            </div>
+            <th:block th:replace="~{fragment/footer::footer}"></th:block>
         </div>
     </body>
+    <th:block th:replace="~{fragment/header::script}">
 </html>

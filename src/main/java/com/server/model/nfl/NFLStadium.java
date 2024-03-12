@@ -1,5 +1,7 @@
 package com.server.model.nfl;
 
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -19,11 +21,11 @@ public class NFLStadium {
     
     private String location;
 
-    private String team;
+    private List<String> team;
 
     private String opened;
 
-    public NFLStadium(String name, long capacity, String location, String team, String opened) {
+    public NFLStadium(String name, long capacity, String location, List<String> team, String opened) {
         this.name = name;
         this.capacity = capacity;
         this.location = location;

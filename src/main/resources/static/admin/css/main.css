@@ -1,96 +1,82 @@
 body {
-    padding: 10px;
+    font-family: "Ubuntu", sans-serif !important;
 }
 
 button {
     cursor: pointer;
+    padding: 5px;
+    border-radius: 999px;
 }
 
-table, th, td {
+a button span {
+    text-decoration: none;
+}
+
+table.data-table,
+.data-table th,
+.data-table td {
     border: 1px solid black;
     border-collapse: collapse;
 }
 
-tr th {
+.data-table tr td {
     padding: 10px;
 }
 
-thead {
+.data-table tr th {
+    text-align: center;
+}
+
+.data-table thead {
     background-color: skyblue;
     height: 60px;
 }
 
-tr:nth-child(even) {
+.data-table tr:nth-child(even) {
     background-color: #d1d0cd;
 }
 
-.wrapper {
-    width: 100%;
-    height: 100%;
+table.format-table {
+    border-spacing: 25px;
+    border-collapse: separate
 }
 
-.menu-wrapper, .form-wrapper {
-    width: 60%;
-    height: 100%;
-}
-
-.logo-wrapper {
-    width: 100%;
-    height: 200px;
-}
-
-.logo {
-    height: 100px;
+.base-image {
+    width: 100px;
     aspect-ratio: 1/1;
-    object-fit: fill;
 }
 
-.group {
-    display: flex;
-    flex-direction: row;
+.font-md {
+    font-size: 24;
+    font-weight: bold;
 }
 
-.jst-center {
-    justify-content: center !important;
+.font-lg {
+    font-size: 32;
+    font-weight: bolder;
 }
 
-.aln-center {
-    align-items: center !important;
-}
-
-.stack {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-}
-
-.menu-item {
-    width: 100%;
-    height: 50px;
-}
-
-.gap-xs {
-    gap: 10px;
-}
-
-.gap-md {
-    gap: 20px;
-}
-
-.gap-ld {
-    gap: 40px;
-}
-
-.gap-xl {
-    gap: 40px;
-}
-
-.fnt-xl {
+.font-xl {
     font-size: 48;
     font-weight: bolder;
 }
 
-.team-logo {
-    width: 100px;
-    height: 100px;
+.footer {
+    width: 100%;
+    height: 200px;
+    background-color: gray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo {
+    aspect-ratio: 1/1;
+    width: 80px;
+}
+
+@media (min-width: 1400px) {
+    .logo {
+        width: 200px;
+    }
 }
