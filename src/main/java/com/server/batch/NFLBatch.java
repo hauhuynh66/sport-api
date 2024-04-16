@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -17,24 +15,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import com.server.model.nfl.NFLMatch;
-import com.server.model.nfl.NFLStadium;
-import com.server.model.nfl.NFLTeam;
+import com.server.document.general.ImageUrl;
+import com.server.document.nfl.NFLMatch;
+import com.server.document.nfl.NFLTeam;
+import com.server.repository.general.ImageUrlRepository;
 import com.server.repository.nfl.NFLMatchRepositoryImpl;
-import com.server.repository.nfl.NFLStadiumRepository;
 import com.server.repository.nfl.NFLTeamRepositoryImpl;
 import com.server.storage.StorageService;
 
-enum TEAM_HEADERS {
-    ShortName, Name, Abbreviation, Conference, Division, Established, Owner
+enum NFL_TEAM_CSV_HEADERS {
+    Code, ShortName, Name, Abbreviation, Conference, Division, Established
 }
 
-enum MATCH_HEADERS {
-    Home, Away, HomeScore, AwayScore, Stadium, Date, Week, Round, Season
-}
-
-enum STADIUM_HEADERS {
-    Name, Capacity, Location, Team, Opened
+enum NFL_MATCH_CSV_HEADERS {
+    Home, Away, HomeScore, AwayScore, Stadium, Date, Round, Season
 }
 
 @Component
@@ -51,7 +45,7 @@ public class NFLBatch implements CommandLineRunner {
     private NFLMatchRepositoryImpl nflMatchRepository;
 
     @Autowired
-    private NFLStadiumRepository nflStadiumRepository;
+    private ImageUrlRepository imageUrlRepository;
 
     @Autowired
     private StorageService storageService;
@@ -59,45 +53,14 @@ public class NFLBatch implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if(init) {
-            nflTeamRepository.clear();
             for (NFLTeam team : getTeamList()) {
                 nflTeamRepository.save(team);
             }
-            nflMatchRepository.clear();
+
             for (NFLMatch match : getMatches()) {
                 nflMatchRepository.save(match);
             }
-            nflStadiumRepository.clear();
-            for (NFLStadium stadium : getStadium()) {
-                nflStadiumRepository.save(stadium);
-            }
         }
-    }
-
-    Collection<NFLStadium> getStadium() throws IOException {
-        ArrayList<NFLStadium> stadiums = new ArrayList<>();
-
-        File file = storageService.load("nfl_stadiums.csv").toFile();
-
-        CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
-            .setHeader(STADIUM_HEADERS.class)
-            .setSkipHeaderRecord(true)
-            .build();
-
-        Iterable<CSVRecord> records = csvFormat.parse(new FileReader(file));
-
-        for (CSVRecord record : records) {
-            List<String> team = Arrays.asList(record.get(STADIUM_HEADERS.Team).split(";"));
-            stadiums.add(new NFLStadium(
-                record.get(STADIUM_HEADERS.Name),
-                Long.parseLong(record.get(STADIUM_HEADERS.Capacity)),
-                record.get(STADIUM_HEADERS.Location),
-                team,
-                record.get(STADIUM_HEADERS.Opened)
-            ));
-        }
-
-        return stadiums;
     }
 
     Collection<NFLTeam> getTeamList() throws IOException {
@@ -106,7 +69,7 @@ public class NFLBatch implements CommandLineRunner {
         File file = storageService.load("nfl_teams.csv").toFile();
 
         CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
-            .setHeader(TEAM_HEADERS.class)
+            .setHeader(NFL_TEAM_CSV_HEADERS.class)
             .setSkipHeaderRecord(true)
             .build();
 
@@ -114,15 +77,21 @@ public class NFLBatch implements CommandLineRunner {
 
         for (CSVRecord record : records) {
             teams.add(new NFLTeam(
-                record.get(TEAM_HEADERS.ShortName),
-                record.get(TEAM_HEADERS.Name),
-                record.get(TEAM_HEADERS.Abbreviation),
-                record.get(TEAM_HEADERS.Division),
-                record.get(TEAM_HEADERS.Conference),
-                "http://localhost:8002/nfl/logo/" + record.get(TEAM_HEADERS.ShortName) + ".svg",
-                Integer.parseInt(record.get(TEAM_HEADERS.Established)),
-                record.get(TEAM_HEADERS.Owner)
+                record.get(NFL_TEAM_CSV_HEADERS.Code),
+                record.get(NFL_TEAM_CSV_HEADERS.ShortName),
+                record.get(NFL_TEAM_CSV_HEADERS.Name),
+                record.get(NFL_TEAM_CSV_HEADERS.Abbreviation),
+                record.get(NFL_TEAM_CSV_HEADERS.Division),
+                record.get(NFL_TEAM_CSV_HEADERS.Conference),
+                Integer.parseInt(record.get(NFL_TEAM_CSV_HEADERS.Established))
             ));
+            imageUrlRepository.save(
+                new ImageUrl(
+                    record.get(NFL_TEAM_CSV_HEADERS.Code),
+                    "NFL",
+                    "http://localhost:8002/nfl/logo/" + record.get(NFL_TEAM_CSV_HEADERS.ShortName) + ".svg"
+                )
+            );
         }
 
         return teams;
@@ -134,51 +103,23 @@ public class NFLBatch implements CommandLineRunner {
         File file = storageService.load("nfl_matches.csv").toFile();
 
         CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
-            .setHeader(MATCH_HEADERS.class)
+            .setHeader(NFL_MATCH_CSV_HEADERS.class)
             .setSkipHeaderRecord(true)
             .build();
 
         Iterable<CSVRecord> records = csvFormat.parse(new FileReader(file));
 
         for (CSVRecord record : records) {
-            int week = 0;
-            String weekStr = record.get(MATCH_HEADERS.Week);
-            if(weekStr == "") {
-                String round = record.get(MATCH_HEADERS.Round);
-                switch (round) {
-                    case "Wild Card Round":
-                        week = -1;
-                        break;
-                    case "Divisional Round":
-                        week = -2;
-                        break;
-                    case "Conference Championship":
-                        week = -3;
-                        break;
-                    case "SuperBowl":
-                        week = -99;
-                        break;
-                }
-            }
-
-            if(week == 0) {
-                try {
-                    week = Integer.parseInt(record.get(MATCH_HEADERS.Week));
-                } catch(NumberFormatException e) {
-                    continue;
-                }
-            }
-
             matches.add(new NFLMatch
             (
-                record.get(MATCH_HEADERS.Home),
-                record.get(MATCH_HEADERS.Away),
-                Integer.parseInt(record.get(MATCH_HEADERS.HomeScore)),
-                Integer.parseInt(record.get(MATCH_HEADERS.AwayScore)),
-                record.get(MATCH_HEADERS.Date),
-                record.get(MATCH_HEADERS.Stadium),
-                week,
-                record.get(MATCH_HEADERS.Season)
+                record.get(NFL_MATCH_CSV_HEADERS.Home),
+                record.get(NFL_MATCH_CSV_HEADERS.Away),
+                Integer.parseInt(record.get(NFL_MATCH_CSV_HEADERS.HomeScore)),
+                Integer.parseInt(record.get(NFL_MATCH_CSV_HEADERS.AwayScore)),
+                record.get(NFL_MATCH_CSV_HEADERS.Date),
+                record.get(NFL_MATCH_CSV_HEADERS.Stadium),
+                Integer.parseInt(record.get(NFL_MATCH_CSV_HEADERS.Round)),
+                Integer.parseInt(record.get(NFL_MATCH_CSV_HEADERS.Season))
             ));
         }
 

@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.server.document.nfl.NFLTeam;
 import com.server.exception.NoRecordException;
 import com.server.exception.QueryParamException;
-import com.server.model.nfl.NFLTeam;
 import com.server.service.nfl.NFLTeamService;
 
 @RestController()
@@ -34,8 +34,8 @@ public class NFLTeamController {
 
     @GetMapping("/info")
     private NFLTeam getByName(
-        @RequestParam(name = "name", required = false) String name
+        @RequestParam(name = "code", required = false) String code
     ) throws NoRecordException {
-        return teamService.findByName(name);
+        return teamService.findByCode(code);
     }
 }

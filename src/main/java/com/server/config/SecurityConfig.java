@@ -9,16 +9,15 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import com.server.security.JWTAuthenticationFilter;
-import com.server.security.JWTAuthorizationFilter;
 
 /**
  * Spring Security Config
@@ -47,14 +46,16 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable());
         http.cors().configurationSource(corsConfigurationSource());
 
-        http.sessionManagement((session) -> session
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        );
-
         http.authorizeHttpRequests((request) -> {
+                    request.requestMatchers("/admin/**").authenticated();
                     request.anyRequest().permitAll();
-            
-        });
+        })
+        .formLogin((form) -> {
+            form
+                .loginPage("/admin/login")
+                .permitAll();
+        })
+        .logout((logout) -> logout.permitAll());
 
         // JWTAuthenticationFilter filter = new JWTAuthenticationFilter(authenticationManager());
         // filter.setFilterProcessesUrl("/api/login");
@@ -63,6 +64,18 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+    @Bean
+	public UserDetailsService userDetailsService() {
+		UserDetails user =
+			User.builder()
+				.username("hauhp")
+				.password(encoder().encode("hauhp"))
+				.roles("USER")
+				.build();
+
+		return new InMemoryUserDetailsManager(user);
+	}
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {

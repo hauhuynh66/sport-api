@@ -2,14 +2,14 @@ package com.server.repository.nfl;
 
 import java.util.List;
 
-import com.server.model.nfl.NFLMatch;
+import com.server.document.nfl.NFLMatch;
 
 public interface NFLMatchRepository {
     void save(NFLMatch match);
     NFLMatch getById(String id);
-    List<NFLMatch> getSchedule(String season);
-    List<NFLMatch> getByTeamAndSeason(String team, String season);
-    List<NFLMatch> getByMatchupAndSeason(String team1, String team2, String season);
-    NFLMatch getMatch(String team1, String team2, String date, String season);
+    List<NFLMatch> getBySeason(int season);
+    List<NFLMatch> getByTeamAndSeason(String team, int season);
+    List<NFLMatch> getByMatchup(String team1, String team2);
+    NFLMatch getMatch(String team1, String team2, String date, int season);
     void clear();
 }

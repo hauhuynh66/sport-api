@@ -7,7 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.server.model.geo.City;
+import com.server.document.geo.City;
 import com.server.repository.geo.CityRepositoryImpl;
 
 @Service

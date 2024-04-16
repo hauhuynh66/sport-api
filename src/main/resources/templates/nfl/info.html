@@ -6,9 +6,9 @@
     <body>
         <div class="row justify-content-center m-0">
             <div class="col-12 col-xl-9 vh-100 d-flex flex-column">
-                <div class="row m-0 h-100">
+                <div class="row m-0 h-100 pt-3">
                     <div class="col-6 d-flex flex-column align-items-center gap-3">
-                        <img style="width: 200px;aspect-ratio: 1/1;" th:src="${info.logoUrl}" />
+                        <img style="width: 200px;aspect-ratio: 1/1;" th:src="${logo}" />
                         <p class="font-md" th:text="${#strings.capitalize(info.fullName)}"></p>
                     </div>
                     <div class="col-6 d-flex flex-column align-items-center">
@@ -17,10 +17,6 @@
                                 <tr>
                                     <td>Established</td>
                                     <td th:text="${info.established}"></td>
-                                </tr>
-                                <tr>
-                                    <td>Owner</td>
-                                    <td th:text="${info.owner}"></td>
                                 </tr>
                                 <tr>
                                     <td>Conference</td>

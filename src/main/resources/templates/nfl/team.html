@@ -14,22 +14,14 @@
                             <th>Logo</th>
                             <th>Conference</th>
                             <th>Division</th>
-                            <th></th>
                         </tr>
                     </thead>
                     <tbody style="text-align: center;">
-                        <tr th:each="team : ${teams}">
-                            <td th:text="${team.fullName}"/>
-                            <td><img th:src="${team.logoUrl}" class="logo"></td>
+                        <tr th:each="team : ${teams}" class="selectable" th:attr="onclick=|teamInfo('${team.code}')|">
+                            <td th:text="${team.fullName}" class="font-md"/>
+                            <td><img th:src="${logos.get(team.code)}" class="logo"></td>
                             <td th:text="${team.conference}">
                             <td th:text="${team.division}">
-                            <td>
-                                <a style="width: 40px;" th:href="'team/' + ${team.name}">
-                                    <button >
-                                        <i class="fas fa-pen"></i>
-                                    </button>
-                                </a>
-                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -38,4 +30,5 @@
         </div>
     </body>
     <th:block th:replace="~{fragment/header::script}"></th:block>
+    <script th:src="@{/js/nfl.js}"></script>
 </html>

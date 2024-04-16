@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.server.model.geo.City;
+import com.server.document.geo.City;
 import com.server.service.geo.CityByCountry;
 import com.server.service.geo.GeoLocationService;
 

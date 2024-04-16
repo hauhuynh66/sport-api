@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.server.document.nfl.NFLMatch;
 import com.server.exception.NoRecordException;
-import com.server.model.nfl.NFLMatch;
 import com.server.repository.nfl.NFLMatchRepositoryImpl;
 
 @Service
@@ -22,7 +22,7 @@ public class NFLMatchService {
         return match;
     }
 
-    public List<NFLMatch> findAll() {
-        return matchRepository.getSchedule("2023");
+    public List<NFLMatch> findBySeason(int season) {
+        return matchRepository.getBySeason(season);
     }
 }

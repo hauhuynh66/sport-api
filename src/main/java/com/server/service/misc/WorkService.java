@@ -9,10 +9,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -25,7 +27,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class WorkService {
     private enum DataColumn {
         Vulnerability(1),
@@ -122,9 +127,9 @@ public class WorkService {
 
     public Map<Integer, List<String>> processInput(Path path, Map<String, List<String>> resouceList) throws IOException {
         FileInputStream file = new FileInputStream(path.toFile());
-        int i = 0;
         Map<Integer, List<String>> data = new HashMap<>();
         List<Integer> merged = new ArrayList<>();
+        Set<String> qaList = new HashSet<>();
 
         try(Workbook workbook = new XSSFWorkbook(file)) {
             Sheet sheet = this.getLastSheet(workbook);
@@ -134,15 +139,14 @@ public class WorkService {
 
             for (Row row : sheet) {
                 if(
-                    !merged.contains(i) &&
                     row.getCell(DataColumn.File.index) != null &&
                     row.getCell(DataColumn.File.index).getCellType() == CellType.STRING &&
                     row.getCell(DataColumn.File.index).getStringCellValue().contains("/")
                 ) {
+                    Integer i = row.getRowNum();
                     Cell fileCell = row.getCell(DataColumn.File.index);
                     String filePath = fileCell.getStringCellValue();
                     filePath = filePath.substring(filePath.indexOf("/"));
-
                     Pair<Category, String> res = process(filePath);
                     switch (res.getFirst()) {
                         case Html:
@@ -162,7 +166,7 @@ public class WorkService {
                                 data.put(i, Arrays.asList("対象外(Other)", "Ngoài đối tượng chuyển đổi."));
                             } else {
                                 if(!isResource(filePath,  resouceList.get("in"))) {
-                                    System.out.println(filePath);
+                                    qaList.add(filePath);
                                 }
                                 data.put(i, Arrays.asList("未確認", ""));
                             }
@@ -170,7 +174,10 @@ public class WorkService {
                             break;
                     }
                 }
-                i++;
+            }
+
+            for(String s : qaList) {
+                System.out.println(s);
             }
         }
         

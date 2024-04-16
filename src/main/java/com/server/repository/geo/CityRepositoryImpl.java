@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import com.server.model.geo.City;
+import com.server.document.geo.City;
 
 @Repository
 public class CityRepositoryImpl implements CityRepository {
@@ -33,7 +33,6 @@ public class CityRepositoryImpl implements CityRepository {
 
     @Override
     public City getByName(String name) {
-
         Query query = new Query();
 
         query.addCriteria(Criteria.where("asciiName").regex(".*" + name + ".*", "i"));

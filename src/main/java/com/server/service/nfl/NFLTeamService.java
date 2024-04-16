@@ -7,9 +7,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.server.document.nfl.NFLTeam;
 import com.server.exception.NoRecordException;
 import com.server.exception.QueryParamException;
-import com.server.model.nfl.NFLTeam;
 import com.server.repository.nfl.NFLTeamRepositoryImpl;
 
 @Service
@@ -21,18 +21,8 @@ public class NFLTeamService {
         nflTeamRepository.save(team);
     }
 
-    public NFLTeam findByName(String name) throws NoRecordException {
-        return nflTeamRepository.getByName(name);
-    }
-
-    public Map<String, String> getLogoList() {
-        List<NFLTeam> teamList = findAll();
-        Map<String, String> logo = new HashMap<>();
-
-        for (NFLTeam nflTeam : teamList) {
-            logo.put(nflTeam.getName(), nflTeam.getLogoUrl());
-        }
-        return logo;
+    public NFLTeam findByCode(String code) throws NoRecordException {
+        return nflTeamRepository.getByCode(code);
     }
 
     public Map<String,String> getTeamNames() {
@@ -40,7 +30,7 @@ public class NFLTeamService {
         Map<String, String> select = new HashMap<>();
 
         for (NFLTeam nflTeam : teamList) {
-            select.put(nflTeam.getFullName(), nflTeam.getName());
+            select.put(nflTeam.getCode(), nflTeam.getFullName());
         }
 
         return select;

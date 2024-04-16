@@ -1,0 +1,30 @@
+<html lang="en">
+  <head>
+    <title>Admin Menu</title>
+    <th:block th:replace="~{fragment/header::header}"></th:block>
+  </head>
+  <body>
+    <div class="row vh-100 justify-content-center m-0">
+      <div class="col-xl-9 col-12 h-100 d-flex flex-column gap-3 p-0">
+        <div
+          class="w-100 h-100 d-flex justify-content-center align-items-center"
+        >
+          <form th:action="@{/admin/login}" method="post" class="px-5 pb-5 pt-2 border border-dark rounded">
+            <p class="font-xl py-2">Login</p>
+            <div class="py-2">
+              <label><input type="text" name="username" placeholder="Username"/></label>
+            </div>
+            <div class="py-2">
+              <label><input type="password" name="password" placeholder="Password"/> </label>
+            </div>
+            <button class="w-100">
+              <input type="submit" value="Sign In" style="border: none;"/>
+            </button>
+          </form>
+        </div>
+        <th:block th:replace="~{fragment/footer::footer}"></th:block>
+      </div>
+    </div>
+  </body>
+  <th:block th:replace="~{fragment/header::script}"></th:block>
+</html>

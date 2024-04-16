@@ -13,7 +13,6 @@ import java.io.IOException;
 @Component
 @AllArgsConstructor
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
-    
     /** 
      * @param request
      * @param response
@@ -23,6 +22,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
      */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        return;
+        response.sendRedirect("/admin/menu");
     }
 }

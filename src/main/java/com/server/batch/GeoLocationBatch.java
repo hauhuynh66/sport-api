@@ -13,8 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import com.server.model.geo.City;
-import com.server.model.geo.Country;
+import com.server.document.geo.City;
+import com.server.document.geo.Country;
 import com.server.repository.geo.CityRepositoryImpl;
 import com.server.storage.StorageService;
 

@@ -49,24 +49,21 @@ public class UploadStorageService implements IStorage {
             if(file.isEmpty()){
                 throw new IOException("File is empty");
             }
+            Date now = new Date();
+            String today = new SimpleDateFormat("yyyyMMdd").format(now);
+            String time = new SimpleDateFormat("HHmmss").format(now);
             
-            String today = new SimpleDateFormat("yyyyMMdd").format(new Date());
             File directory = this.root.resolve(today).toFile();
 
             if(!directory.exists() || !directory.isDirectory()) {
                 directory.mkdirs();
             }
 
-            int fileCount = directory.listFiles((dir, name)->
-                    name.contains(file.getOriginalFilename())
-            ).length;
+            // int fileCount = directory.listFiles((dir, name)->
+            //         name.contains(file.getOriginalFilename())
+            // ).length;
             
-            Path savePath;
-            if(fileCount == 0) {
-                savePath = directory.toPath().resolve(file.getOriginalFilename());
-            } else {
-                savePath = directory.toPath().resolve(fileCount + file.getOriginalFilename());
-            }
+            Path savePath = directory.toPath().resolve(time + "_" + file.getOriginalFilename());
 
             savePath = savePath.normalize().toAbsolutePath();
             

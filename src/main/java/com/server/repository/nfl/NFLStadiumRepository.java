@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import com.server.model.nfl.NFLStadium;
+import com.server.document.nfl.NFLStadium;
 
 @Repository
 public class NFLStadiumRepository {

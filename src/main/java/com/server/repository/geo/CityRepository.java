@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 
-import com.server.model.geo.City;
+import com.server.document.geo.City;
 
 public interface CityRepository {
     void save(City city);
