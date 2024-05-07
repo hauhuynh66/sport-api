@@ -19,7 +19,7 @@ public class ImageUrlRepository {
 
     public void save(ImageUrl imageUrl) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("type").is(imageUrl.getType()).and("code").is(imageUrl.getCode()));
+        query.addCriteria(Criteria.where("type").is(imageUrl.getType()).and("name").is(imageUrl.getName()).and("code").is(imageUrl.getCode()));
         ImageUrl url = template.findOne(query, ImageUrl.class) ;
         if(url == null) {
             template.save(imageUrl);
@@ -38,9 +38,17 @@ public class ImageUrlRepository {
         return template.find(query, ImageUrl.class);
     }
 
-    public ImageUrl getByTypeAndCode(String type, String code) {
+    public List<ImageUrl> getByTypeAndName(String type, String name) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("type").is(type).and("code").is(code));
+
+        query.addCriteria(Criteria.where("type").is(type).and("name").is(name));
+
+        return template.find(query, ImageUrl.class);
+    }
+
+    public ImageUrl getOne(String type, String name, String code) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("type").is(type).and("name").is(name).and("code").is(code));
 
         return template.findOne(query, ImageUrl.class);
     }

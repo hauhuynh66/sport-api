@@ -1,4 +1,4 @@
-package com.server.batch;
+package com.server.migration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

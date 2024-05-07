@@ -25,7 +25,7 @@ public class NFLTeamService {
         return nflTeamRepository.getByCode(code);
     }
 
-    public Map<String,String> getTeamNames() {
+    public Map<String,String> teamNames() {
         List<NFLTeam> teamList = findAll();
         Map<String, String> select = new HashMap<>();
 
@@ -36,20 +36,20 @@ public class NFLTeamService {
         return select;
     }
 
-    public List<NFLTeam> findByGroup(String division, String conference) throws QueryParamException {
+    public List<NFLTeam> findByDivision(String division, String conference) throws QueryParamException {
         if(division == null && conference == null) {
             return findAll();
         }
 
-        if(division != null && conference !=null) {
-            return nflTeamRepository.getByDivisionAndConference(division, conference);
-        }
-
-        if(division == null) {
+        if(division == null && conference != null) {
             return nflTeamRepository.getByConference(conference);
         }
 
-        return nflTeamRepository.getByDivision(division);
+        if(division != null && conference !=null) {
+            return nflTeamRepository.getByDivision(division, conference);
+        }
+
+        throw new QueryParamException("Please enter division for conference " + conference);
     }
 
     public List<NFLTeam> findAll() {

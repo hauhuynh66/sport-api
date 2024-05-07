@@ -6,6 +6,6 @@ function matchInfo(id) {
     window.location = '/admin/nfl/schedule/info?id=' + id;
 };
 
-$("#season-selector").on("change", (e)=> {
+$("#season-selector").on("change", ()=> {
     window.location = '/admin/nfl/schedule?season=' + $("#season-selector option:selected").text();
 })

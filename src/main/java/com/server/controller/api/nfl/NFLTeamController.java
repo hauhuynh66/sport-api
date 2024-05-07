@@ -29,7 +29,7 @@ public class NFLTeamController {
         @RequestParam(name = "division", required = false) String division,
         @RequestParam(name = "conference", required = false) String conference
     ) throws QueryParamException {
-        return teamService.findByGroup(division, conference);
+        return teamService.findByDivision(division, conference);
     }
 
     @GetMapping("/info")

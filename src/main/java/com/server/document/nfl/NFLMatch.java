@@ -1,10 +1,15 @@
 package com.server.document.nfl;
 
+import java.security.InvalidParameterException;
 import java.util.Calendar;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.server.document.validator.NFLScore;
+
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -22,33 +27,38 @@ public class NFLMatch {
     @NotNull
     @Size(min = 2, max = 3)
     private String teamOne;
+
     @NotNull
     @Size(min = 2, max = 3)
     private String teamTwo;
     
     @NotNull
+    @NFLScore
     private int scoreOne = 0;
 
     @NotNull
+    @NFLScore
     private int scoreTwo = 0;
 
     @NotNull
-    private String date;
-
-    @NotNull
+    @Min(1)
+    @Max(19)
     private int round = 1;
 
     @NotNull
-    private int season = Calendar.getInstance().get(Calendar.YEAR) - 1;
+    private int season = Calendar.getInstance().get(Calendar.YEAR);
 
     private String stadium;
 
-    public NFLMatch(String teamOne, String teamTwo, int scoreOne, int scoreTwo, String date, String stadium, int round, int season) {
+    public NFLMatch(String teamOne, String teamTwo, int scoreOne, int scoreTwo, String stadium, int round, int season) throws InvalidParameterException {
+        if(teamOne == teamTwo) {
+            throw new InvalidParameterException("Same team cant face eachother");
+        }
+
         this.teamOne = teamOne;
         this.teamTwo = teamTwo;
         this.scoreOne = scoreOne;
         this.scoreTwo = scoreTwo;
-        this.date = date;
         this.stadium = stadium;
         this.round = round;
         this.season = season;

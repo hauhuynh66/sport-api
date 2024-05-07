@@ -10,6 +10,6 @@ public interface NFLMatchRepository {
     List<NFLMatch> getBySeason(int season);
     List<NFLMatch> getByTeamAndSeason(String team, int season);
     List<NFLMatch> getByMatchup(String team1, String team2);
-    NFLMatch getMatch(String team1, String team2, String date, int season);
+    NFLMatch getMatch(String team1, String team2, int round, int season);
     void clear();
 }

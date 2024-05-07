@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -27,10 +29,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Service
-@Slf4j
 public class WorkService {
     private enum DataColumn {
         Vulnerability(1),
@@ -62,11 +61,14 @@ public class WorkService {
         Adodb("/data/module/adodb/*"),
         Calendar("/data/module/Calendar/*"),
         SOAP("/data/module/SOAP/*"),
+        NuSoap("/php/lib/nusoap/*"),
+        Smarty("php/lib/Smarty/*"),
         DB("/data/module/DB/*"),
         Net("/data/module/Net/*"),
         Mail("/data/module/Mail/*"),
         TempDir("/data/Template_TmpDir/*"),
         PHP5("/php/DNP/PHP5/*"),
+        DNPLib("\\/php\\/DNP\\/P_[a-zA-Z]{0,}"),
         Tool("/_tool/*"),
         BasicDB("/basic_db/*"),
         CornetTool("/cornet_tools/*"),
@@ -158,8 +160,11 @@ public class WorkService {
                         case PerlSub:
                             data.put(i, Arrays.asList("対象外(Other)", "検査対象がperlsubライブラリのため、対象外"));
                             break;
+                        case PHPIni:
+                            data.put(i, Arrays.asList("対象外(Other)", "検査対象がphp.iniファイルのため、対象外"));
+                            break;
                         case OutOfScope:
-                            data.put(i, Arrays.asList("対象外(Other)", "ファイルが「"+ res.getSecond() +"」にあるため、調査範囲外となる。"));
+                            data.put(i, Arrays.asList("対象外(Other)", res.getSecond()));
                             break;
                         default:
                             if(isResource(filePath, resouceList.get("out"))) {
@@ -205,10 +210,24 @@ public class WorkService {
             return Pair.of(Category.JavaScript, "");
         } else if(filePath.contains("perl/perlsub/")) {
             return Pair.of(Category.PerlSub, "");
-        }
-        
-        else if((s = scopeOf(filePath))!= Scope.Undefined) {
-            return Pair.of(Category.OutOfScope, s.path);
+        } else if(filePath.endsWith("php.ini")) {
+            return Pair.of(Category.PHPIni, "");
+        } else if((s = scopeOf(filePath))!= Scope.Undefined) {
+            String des = "ファイルが「"+ s.path +"」にあるため、調査範囲外となる。";
+
+            if(s == Scope.NuSoap) {
+                des = "検査対象がNuSOAPライブラリのため、対象外";
+            } else if (s == Scope.DNPLib) {
+                Pattern pattern = Pattern.compile("P_[a-zA-Z]{0,}");
+                Matcher matcher = pattern.matcher(filePath);
+                if(matcher.find()) {
+                    des = "ファイルが「"+ matcher.group(0) +"」にあるため、調査範囲外となる。";
+                }
+            } else if (s == Scope.Smarty) {
+                des = "検査対象がSmartyライブラリのため、対象外";
+            }
+
+            return Pair.of(Category.OutOfScope, des);
         }
 
         return Pair.of(Category.Other, "");
@@ -216,8 +235,10 @@ public class WorkService {
 
     private Scope scopeOf(String path) {
         Optional<Scope> find = Scope.stream().filter((compare)-> {
-            String comparePath = compare.path.substring(0, compare.path.length() - 1);
-            return path.contains(comparePath);
+            Pattern pattern = Pattern.compile(compare.path);
+            Matcher matcher = pattern.matcher(path);
+            
+            return matcher.find();
         }).findFirst();
 
         return find.isPresent() ? find.get() : Scope.Undefined;

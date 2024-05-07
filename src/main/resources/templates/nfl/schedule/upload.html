@@ -1,0 +1,17 @@
+<html lang="en">
+    <head>
+        <title>NFL Schedule</title>
+        <th:block th:replace="~{fragment/header::header}"></th:block>
+    </head>
+    <body>
+        <div class="row vh-100 justify-content-center m-0">
+            <div class="col-xl-9 col-12 h-100 d-flex flex-column align-items-center gap-3 p-0">
+                <form th:action="@{/admin/nfl/schedule/upload}" method="post" class="w-100 h-100 py-5">
+                    
+                </form>
+                <th:block th:replace="~{fragment/footer::footer}"></th:block>
+            </div>
+        </div>
+    </body>
+    <th:block th:replace="~{fragment/header::script}"></th:block>
+</html>

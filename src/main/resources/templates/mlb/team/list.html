@@ -1,27 +1,27 @@
 <html lang="en">
     <head>
-        <title>NFL Teams</title>
+        <title>MLB Teams</title>
         <th:block th:replace="~{fragment/header::header}"></th:block>
     </head>
     <body>
         <div class="row justify-content-center m-0">
             <div class="col-xl-9 col-12 d-flex flex-column gap-3 py-3">
-                <p class="font-lg">NFL Team List</p>
+                <p class="font-lg">MLB Team List</p>
                 <table class="w-100 h-100 data-table">
                     <thead>
                         <tr>
                             <th style="width: 20%;">Name</th>
                             <th>Logo</th>
-                            <th>Conference</th>
+                            <th>League</th>
                             <th>Division</th>
                         </tr>
                     </thead>
                     <tbody style="text-align: center;">
                         <tr th:each="team : ${teams}" class="selectable" th:attr="onclick=|teamInfo('${team.code}')|">
-                            <td th:text="${team.fullName}" class="font-md"/>
+                            <td th:text="${team.name}" class="font-md"></td>
                             <td><img th:src="${logos.get(team.code)}" class="logo"></td>
-                            <td th:text="${team.conference}">
-                            <td th:text="${team.division}">
+                            <td th:text="${team.league}"></td>
+                            <td th:text="${team.division}"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -30,5 +30,5 @@
         </div>
     </body>
     <th:block th:replace="~{fragment/header::script}"></th:block>
-    <script th:src="@{/js/nfl.js}"></script>
+<script th:src="@{/js/mlb.js}"></script>
 </html>

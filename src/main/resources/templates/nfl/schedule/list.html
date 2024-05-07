@@ -9,14 +9,13 @@
                 <p class="font-lg">NFL Match History</p>
                 <span class="font-md">Season</span>
                 <select name="season" id="season-selector">
-                    <option th:each="year : ${season_list}" th:text="${year}" th:selected="${year==selected}"></option>
+                    <option th:each="year : ${season_list}" th:text="${year}" th:selected="${year==season}"></option>
                 </select>
                 <table class="w-100 h-100 data-table my-2">
                     <thead>
                         <tr>
                             <th>Team 1</th>
                             <th>Team 2</th>
-                            <th>Date</th>
                         </tr>
                     </thead>
                     <tbody style="text-align: center;">
@@ -29,7 +28,6 @@
                                 <img th:src="${logos.get(match.teamTwo)}" class="logo">
                                 <p th:text="${match.scoreTwo}" th:class="${match.scoreOne < match.scoreTwo ? 'text-danger' : ''}"></p>
                             </td>
-                            <td th:text="${match.date}" style="font-weight: bold;" />
                         </tr>
                     </tbody>
                 </table>

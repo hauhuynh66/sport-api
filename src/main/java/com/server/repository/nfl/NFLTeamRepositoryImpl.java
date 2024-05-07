@@ -62,18 +62,6 @@ public class NFLTeamRepositoryImpl implements NFLTeamRepository {
     }
 
     @Override
-    public List<NFLTeam> getByDivision(String division) throws QueryParamException {
-        if(!divisionList.contains(division)) {
-            throw new QueryParamException("Division " + division + " not exists");
-        }
-
-        Query query = new Query();
-        query.addCriteria(Criteria.where("division").is(division));
-
-        return template.find(query, NFLTeam.class);
-    }
-
-    @Override
     public List<NFLTeam> getByConference(String conference) throws QueryParamException {
         if(!conferenceList.contains(conference)) {
             throw new QueryParamException("Conference " + conference + " not exists");
@@ -86,7 +74,7 @@ public class NFLTeamRepositoryImpl implements NFLTeamRepository {
     }
 
     @Override
-    public List<NFLTeam> getByDivisionAndConference(String division, String conference) throws QueryParamException {
+    public List<NFLTeam> getByDivision(String division, String conference) throws QueryParamException {
 
         if(!divisionList.contains(division)) {
             throw new QueryParamException("Division " + division + " not exists");

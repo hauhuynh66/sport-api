@@ -1,6 +1,7 @@
 package com.server.controller.admin.nfl;
 
 import java.util.Calendar;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
@@ -21,13 +22,14 @@ import com.server.exception.NoRecordException;
 import com.server.exception.QueryParamException;
 import com.server.lib.SortUtils;
 import com.server.service.general.ImageUrlService;
+import com.server.service.nfl.NFLMatchError;
 import com.server.service.nfl.NFLMatchService;
 import com.server.service.nfl.NFLTeamService;
 
 import jakarta.validation.Valid;
 
 @Controller
-@RequestMapping("/admin/nfl")
+@RequestMapping("/admin/sport/nfl")
 public class NFLAdminController {
    private final static String iconPath = "/img/nfl.svg";
    private static Map<String, String> menus = Map.of("team", "Teams", "schedule", "Schedule");
@@ -68,9 +70,9 @@ public class NFLAdminController {
 
    @GetMapping("/team")
    public String team(Model model) {
-      model.addAttribute("logos", urlService.findByType("NFL"));
+      model.addAttribute("logos", urlService.findByTypeAndName("NFL", "TEAM_LOGO"));
       model.addAttribute("teams", nflTeamService.findAll());
-      return "/nfl/team";
+      return "/nfl/team/list";
    }
 
    @GetMapping("/schedule")
@@ -80,26 +82,31 @@ public class NFLAdminController {
          throw new QueryParamException(season + " season has not yet been started");
       }
 
-      model.addAttribute("selected", season);
-      model.addAttribute("logos", urlService.findByType("NFL"));
-      model.addAttribute("season_list", IntStream.range(currentYear - 10, currentYear).toArray());
+      if(season == 0) {
+         season = currentYear;
+      }
+
+      model.addAttribute("season", season);
+      model.addAttribute("logos", urlService.findByTypeAndName("NFL", "TEAM_LOGO"));
+      model.addAttribute("season_list", IntStream.range(currentYear - 10, currentYear + 1).toArray());
       model.addAttribute("matches", nflMatchService.findBySeason(season));
       return "/nfl/schedule/list";
    }
 
    @GetMapping("/team/{code}")
    public String teamInfo(@PathVariable String code, Model model) throws NoRecordException {
-      model.addAttribute("logo", urlService.findByTypeAndCode("NFL", code));
+      model.addAttribute("logo", urlService.find("NFL", "TEAM_LOGO",code));
       model.addAttribute("info", nflTeamService.findByCode(code));
-      return "/nfl/info";
+      return "/nfl/team/info";
    }
 
    @GetMapping("/schedule/form")
-   public String scheduleForm(NFLMatch match, BindingResult result, ModelMap model) {
-      Map<String, String> teamList = nflTeamService.getTeamNames();
+   public String scheduleForm(ModelMap model) {
+      Map<String, String> teamList = nflTeamService.teamNames();
       if(!model.containsAttribute("match")) {
-         model.addAttribute("match", match);
+         model.addAttribute("match", new NFLMatch());
       }
+
       model.addAttribute("sorted_teams", SortUtils.getSortedMapKey(teamList));
       model.addAttribute("teams", teamList);
       model.addAttribute("sorted_rounds", SortUtils.getSortedMapKey(rounds));
@@ -109,13 +116,32 @@ public class NFLAdminController {
    }
 
    @PostMapping("/schedule/check")
-   public String scheduleFormCheck(@Valid NFLMatch match, BindingResult result, RedirectAttributes redirectAttrs) {
-      if(result.hasErrors()) {
+   public String scheduleFormCheck(@Valid NFLMatch match, BindingResult result, Model model, RedirectAttributes redirectAttrs) {
+      List<NFLMatchError> validateErrors = nflMatchService.validate(match);
+      if(result.hasErrors() || !validateErrors.isEmpty()) {
          redirectAttrs.addFlashAttribute("match", match);
          redirectAttrs.addFlashAttribute("errors", result.getAllErrors());
+         redirectAttrs.addFlashAttribute("validate_errors", validateErrors);
          return "redirect:/admin/nfl/schedule/form";
       }
 
+      model.addAttribute("match", match);
+      model.addAttribute("status", nflMatchService.getMatchStatus(match));
+      model.addAttribute("team1_logo", urlService.find("NFL", "TEAM_LOGO", match.getTeamOne()));
+      model.addAttribute("team2_logo", urlService.find("NFL", "TEAM_LOGO", match.getTeamTwo()));
+      model.addAttribute("round", rounds.get(match.getRound()));
       return "/nfl/schedule/confirm";
+   }
+
+   @PostMapping("/schedule/add")
+   public String scheduleAdd(@Valid NFLMatch match, BindingResult result, Model model) {
+      this.nflMatchService.save(match);
+
+      return "/nfl/schedule/thanks";
+   }
+
+   @GetMapping("/schedule/upload")
+   public String scheduleUploadForm(ModelMap model) {
+      return "/nfl/schedule/upload";
    }
 }

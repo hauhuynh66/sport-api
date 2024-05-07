@@ -25,11 +25,15 @@ public class ImageUrl {
     @JsonIgnore
     private String type;
 
+    @JsonIgnore
+    private String name;
+
     private String value;
 
-    public ImageUrl(String code, String type, String value) {
+    public ImageUrl(String code, String type, String name, String value) {
         this.code = code;
         this.type = type;
+        this.name = name;
         this.value = value;
     }
 }

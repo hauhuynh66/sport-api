@@ -1,4 +1,4 @@
-package com.server.batch;
+package com.server.migration;
 
 import java.io.File;
 import java.io.FileReader;

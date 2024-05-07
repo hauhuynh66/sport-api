@@ -1,4 +1,4 @@
-package com.server.batch;
+package com.server.migration;
 
 import java.io.File;
 import java.io.FileReader;
@@ -28,7 +28,7 @@ enum NFL_TEAM_CSV_HEADERS {
 }
 
 enum NFL_MATCH_CSV_HEADERS {
-    Home, Away, HomeScore, AwayScore, Stadium, Date, Round, Season
+    Home, Away, HomeScore, AwayScore, Stadium, Round, Season
 }
 
 @Component
@@ -66,7 +66,7 @@ public class NFLBatch implements CommandLineRunner {
     Collection<NFLTeam> getTeamList() throws IOException {
         ArrayList<NFLTeam> teams = new ArrayList<>();
 
-        File file = storageService.load("nfl_teams.csv").toFile();
+        File file = storageService.load("nfl/teams.csv").toFile();
 
         CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
             .setHeader(NFL_TEAM_CSV_HEADERS.class)
@@ -89,6 +89,7 @@ public class NFLBatch implements CommandLineRunner {
                 new ImageUrl(
                     record.get(NFL_TEAM_CSV_HEADERS.Code),
                     "NFL",
+                    "TEAM_LOGO",
                     "http://localhost:8002/nfl/logo/" + record.get(NFL_TEAM_CSV_HEADERS.ShortName) + ".svg"
                 )
             );
@@ -100,7 +101,7 @@ public class NFLBatch implements CommandLineRunner {
     Collection<NFLMatch> getMatches() throws IOException {
         ArrayList<NFLMatch> matches = new ArrayList<>();
 
-        File file = storageService.load("nfl_matches.csv").toFile();
+        File file = storageService.load("nfl/matches.csv").toFile();
 
         CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
             .setHeader(NFL_MATCH_CSV_HEADERS.class)
@@ -116,7 +117,6 @@ public class NFLBatch implements CommandLineRunner {
                 record.get(NFL_MATCH_CSV_HEADERS.Away),
                 Integer.parseInt(record.get(NFL_MATCH_CSV_HEADERS.HomeScore)),
                 Integer.parseInt(record.get(NFL_MATCH_CSV_HEADERS.AwayScore)),
-                record.get(NFL_MATCH_CSV_HEADERS.Date),
                 record.get(NFL_MATCH_CSV_HEADERS.Stadium),
                 Integer.parseInt(record.get(NFL_MATCH_CSV_HEADERS.Round)),
                 Integer.parseInt(record.get(NFL_MATCH_CSV_HEADERS.Season))

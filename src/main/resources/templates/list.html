@@ -1,0 +1,35 @@
+<html lang="en">
+    <head>
+        <title>Image URLs</title>
+        <th:block th:replace="~{fragment/header::header}"></th:block>
+    </head>
+    <body>
+        <div class="row justify-content-center m-0">
+            <div class="col-xl-9 col-12 d-flex flex-column gap-3 py-3">
+                <p class="font-lg">Image URLs</p>
+                <select>
+                    <option th:each="type : ${types}" th:text="${type}"></option>
+                </select>
+                <table class="w-100 h-100 data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%;">Name</th>
+                            <th>Code</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody style="text-align: center;">
+                        <tr th:each="url : ${urls}" class="selectable">
+                            <td th:text="${url.name}"></td>
+                            <td th:text="${url.code}"></td>
+                            <td th:text="${url.value}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <th:block th:replace="~{fragment/footer::footer}"></th:block>
+        </div>
+    </body>
+    <th:block th:replace="~{fragment/header::script}"></th:block>
+<script th:src="@{/js/nfl.js}"></script>
+</html>

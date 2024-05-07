@@ -27,7 +27,7 @@ public class NFLMatchRepositoryImpl implements NFLMatchRepository {
                     .is(match.getSeason())
                     .and("teamOne").in(teams)
                     .and("teamTwo").in(teams)
-                    .and("date").is(match.getDate())
+                    .and("round").is(match.getRound())
         );
         NFLMatch existMatch = template.findOne(query, NFLMatch.class) ;
         if(existMatch == null) {
@@ -80,12 +80,12 @@ public class NFLMatchRepositoryImpl implements NFLMatchRepository {
     }
 
     @Override
-    public NFLMatch getMatch(String team1, String team2, String date, int season) {
+    public NFLMatch getMatch(String team1, String team2, int round, int season) {
         List<String> teams = Arrays.asList(team1, team2);
 
         Query query = new Query();
         query.addCriteria(
-            Criteria.where("teamOne").in(teams).and("teamTwo").in(teams).and("season").is(season).and("date").is(date)
+            Criteria.where("teamOne").in(teams).and("teamTwo").in(teams).and("season").is(season).and("round").is(round)
         );
 
         return template.findOne(query, NFLMatch.class);
