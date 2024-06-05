@@ -19,7 +19,7 @@ public class NFLMatchRepositoryImpl implements NFLMatchRepository {
     private MongoTemplate template;
 
     @Override
-    public void save(NFLMatch match) {
+    public String save(NFLMatch match) {
         List<String> teams = Arrays.asList(match.getTeamOne(), match.getTeamTwo());
         Query query = new Query();
         query.addCriteria(
@@ -29,14 +29,15 @@ public class NFLMatchRepositoryImpl implements NFLMatchRepository {
                     .and("teamTwo").in(teams)
                     .and("round").is(match.getRound())
         );
+
         NFLMatch existMatch = template.findOne(query, NFLMatch.class) ;
         if(existMatch == null) {
-            template.save(match);
-        } else {
-            Document doc = new Document();
-            template.getConverter().write(match, doc);
-            template.upsert(query, Update.fromDocument(doc), "nfl_match");
+            return template.save(match).getId();
         }
+        Document doc = new Document();
+        template.getConverter().write(match, doc);
+        template.upsert(query, Update.fromDocument(doc), "nfl_match");
+        return existMatch.getId();
     }
 
     @Override

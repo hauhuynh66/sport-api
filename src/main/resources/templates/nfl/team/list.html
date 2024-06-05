@@ -14,14 +14,20 @@
                             <th>Logo</th>
                             <th>Conference</th>
                             <th>Division</th>
+                            <th>Colors</th>
                         </tr>
                     </thead>
                     <tbody style="text-align: center;">
                         <tr th:each="team : ${teams}" class="selectable" th:attr="onclick=|teamInfo('${team.code}')|">
-                            <td th:text="${team.fullName}" class="font-md"></td>
+                            <td th:text="${team.name}" class="font-md"></td>
                             <td><img th:src="${logos.get(team.code)}" class="logo"></td>
                             <td th:text="${team.conference}"></td>
                             <td th:text="${team.division}"></td>
+                            <td>
+                                <div class="d-flex flex-row justify-content-center align-items-center w-100 h-100">
+                                    <div th:each="color : ${team.colors}" th:style="|background-color: @{${color}}; width: 30px; aspect-ratio: 1/1; border : 1px solid black; margin: 5px;|"></div>
+                                </div>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

@@ -91,3 +91,8 @@ table.format-table {
     aspect-ratio: 1/1;
     width: 100px;
 }
+
+input[readonly] {
+    background-color:#F8F8F8;
+    color: #545454;
+}

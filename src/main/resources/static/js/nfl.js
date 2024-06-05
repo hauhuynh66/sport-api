@@ -3,9 +3,9 @@ function teamInfo(code) {
 };
 
 function matchInfo(id) {
-    window.location = '/admin/nfl/schedule/info?id=' + id;
+    window.location = '/admin/nfl/matches/info?id=' + id;
 };
 
-$("#season-selector").on("change", ()=> {
-    window.location = '/admin/nfl/schedule?season=' + $("#season-selector option:selected").text();
+$("#season-selector").on("change", () => {
+    window.location = '/admin/nfl/matches?season=' + $("#season-selector option:selected").text();
 })

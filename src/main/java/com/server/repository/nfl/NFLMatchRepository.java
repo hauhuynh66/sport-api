@@ -5,7 +5,7 @@ import java.util.List;
 import com.server.document.nfl.NFLMatch;
 
 public interface NFLMatchRepository {
-    void save(NFLMatch match);
+    String save(NFLMatch match);
     NFLMatch getById(String id);
     List<NFLMatch> getBySeason(int season);
     List<NFLMatch> getByTeamAndSeason(String team, int season);

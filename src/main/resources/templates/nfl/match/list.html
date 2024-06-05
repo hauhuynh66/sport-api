@@ -1,0 +1,57 @@
+<html lang="en">
+    <head>
+        <title>NFL Schedule</title>
+        <th:block th:replace="~{fragment/header::header}"></th:block>
+    </head>
+    <body>
+        <div class="row h-100 justify-content-center m-0">
+            <div class="col-xl-9 col-12 d-flex flex-column">
+                <p class="font-lg">NFL Match History</p>
+                <span class="font-md">Season</span>
+                <select name="season" id="season-selector">
+                    <option th:each="year : ${season_list}" th:text="${year}" th:selected="${year==season}"></option>
+                </select>
+                <table class="w-100 data-table my-2" th:if="${#arrays.length(matches) > 0}">
+                    <thead>
+                        <tr>
+                            <th>Team 1</th>
+                            <th>Team 2</th>
+                        </tr>
+                    </thead>
+                    <tbody style="text-align: center;">
+                        <tr th:each="match : ${matches}" class="selectable" th:attr="onclick=|matchInfo('${match.id}')|">
+                            <td class="font-lg">
+                                <img th:src="${logos.get(match.teamOne)}" class="logo">
+                                <p th:text="${match.scoreOne}" th:class="${match.scoreOne > match.scoreTwo ? 'text-danger' : ''}"></p>
+                            </td>
+                            <td class="font-lg">
+                                <img th:src="${logos.get(match.teamTwo)}" class="logo">
+                                <p th:text="${match.scoreTwo}" th:class="${match.scoreOne < match.scoreTwo ? 'text-danger' : ''}"></p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div th:unless="${#arrays.length(matches) > 0}" class="w-100 h-100 d-flex justify-content-center align-items-center">
+                    <p class="font-lg">No match(es) found</p>
+                </div>
+                <div class="row m-0 py-3">
+                    <a th:href="@{'/admin/nfl/schedule/form'}" class="col-6" style="text-decoration: none;">
+                        <button class="d-flex justify-content-center align-items-center w-100 gap-3">
+                            <i class="fas fa-plus"></i>
+                            <span>Add</span>
+                        </button>
+                    </a>
+                    <a th:href="@{'/admin/nfl/schedule/upload'}" class="col-6" style="text-decoration: none;">
+                        <button class="d-flex justify-content-center align-items-center w-100 gap-3">
+                            <i class="fas fa-file-import"></i>
+                            <span>Upload</span>
+                        </button>
+                    </a>
+                </div>
+                <th:block th:replace="~{fragment/footer::footer}"></th:block>
+            </div>
+        </div>
+    </body>
+    <th:block th:replace="~{fragment/header::script}"></th:block>
+    <script th:src="@{/js/nfl.js}"></script>
+</html>

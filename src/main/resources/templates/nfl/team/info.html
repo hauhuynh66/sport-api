@@ -26,9 +26,43 @@
                                     <td>Division</td>
                                     <td th:text="${info.division}"></td>
                                 </tr>
+                                <tr>
+                                    <td>Colors</td>
+                                    <td>
+                                        <div class="d-flex flex-row justify-content-start align-items-center w-100 h-100">
+                                            <div th:each="color : ${info.colors}" th:style="|background-color: @{${color}}; width: 30px; aspect-ratio: 1/1; border : 1px solid black; margin: 5px 5px 5px 0px;|"></div>
+                                        </div>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
+                </div>
+                <p>Current Roster</p>
+                <div class="row m-0 mb-5">
+                    <th:block th:if="${#arrays.length(roster) > 0}">
+                        <table class="w-100 h-100 data-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50%;">Name</th>
+                                    <th>Position</th>
+                                    <th>Number</th>
+                                </tr>
+                            </thead>
+                            <tbody style="text-align: center;">
+                                <tr th:each="player : ${roster}" class="selectable">
+                                    <td th:text="${player.name}" class="font-md"></td>
+                                    <td th:text="${player.position}"></td>
+                                    <td th:text="${player.number}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </th:block>
+                    <th:block th:unless="${#arrays.length(roster) > 0}">
+                        <div style="width: 100%; height: 200px; text-align: center;">
+                            <p style="margin-top: 80px;">Can't find roster</p>
+                        </div>
+                    </th:block>
                 </div>
                 <th:block th:replace="~{fragment/footer::footer}"></th:block>
             </div>

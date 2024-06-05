@@ -1,9 +1,8 @@
 package com.server.storage;
 
-import org.springframework.core.io.Resource;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.nio.file.Path;
+
+import org.springframework.core.io.Resource;
 
 /**
  * Storage interface
@@ -16,5 +15,6 @@ public interface IStorage {
     Path load(String filename);
     Resource loadAsResource(String filename);
     default void flush() {
+        
     }
 }

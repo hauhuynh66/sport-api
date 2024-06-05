@@ -1,0 +1,42 @@
+<html lang="en">
+    <head>
+        <title>Admin Menu</title>
+        <th:block th:replace="~{fragment/header::header}"></th:block>
+    </head>
+    <body>
+        <div class="row h-100 justify-content-center m-0">
+            <div class="col-xl-9 col-12 d-flex flex-column">
+                <p class="font-lg">List</p>
+                <select id="type-selector" class="my-3">
+                    <option th:each="type : ${types}" th:text="${type}" th:value="${type}" th:selected="${type == selected}">
+                    </option>
+                </select>
+                <th:block th:if="${#arrays.length(encs) > 0}">
+                    <table class="w-100 data-table mb-3">
+                        <thead>
+                            <tr>
+                                <th style="width: 15%;">Name</th>
+                                <th>Code</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody style="text-align: center;">
+                            <tr th:each="enc : ${encs}" class="selectable" th:attr="onclick=|encDetail('${enc.id}')|">
+                                <td th:text="${enc.name}"></td>
+                                <td th:text="${enc.code}"></td>
+                                <td th:text="${enc.value}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </th:block>
+                <th:block th:unless="${#arrays.length(encs) > 0}">
+                    <div class="w-100 h-100 d-flex justify-content-center align-items-center">
+                        <p class="font-lg">No Record</p>
+                    </div>
+                </th:block>
+                <th:block th:replace="~{fragment/footer::footer}"></th:block>
+            </div>
+        </div>
+    </body>
+    <th:block th:replace="~{fragment/header::script}"></th:block>
+</html>

@@ -48,9 +48,7 @@ public class NFLMatch {
     @NotNull
     private int season = Calendar.getInstance().get(Calendar.YEAR);
 
-    private String stadium;
-
-    public NFLMatch(String teamOne, String teamTwo, int scoreOne, int scoreTwo, String stadium, int round, int season) throws InvalidParameterException {
+    public NFLMatch(String teamOne, String teamTwo, int scoreOne, int scoreTwo, int round, int season) throws InvalidParameterException {
         if(teamOne == teamTwo) {
             throw new InvalidParameterException("Same team cant face eachother");
         }
@@ -59,7 +57,6 @@ public class NFLMatch {
         this.teamTwo = teamTwo;
         this.scoreOne = scoreOne;
         this.scoreTwo = scoreTwo;
-        this.stadium = stadium;
         this.round = round;
         this.season = season;
     }

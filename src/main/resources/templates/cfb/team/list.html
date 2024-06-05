@@ -1,0 +1,44 @@
+<html lang="en">
+    <head>
+        <title>College Football Programs</title>
+        <th:block th:replace="~{fragment/header::header}"></th:block>
+    </head>
+    <body>
+        <div class="row justify-content-center m-0">
+            <div class="col-xl-9 col-12 d-flex flex-column gap-3 py-3">
+                <p class="font-lg">Football Bowl Division I-A</p>
+                <table class="w-100 h-100 data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%;">School</th>
+                            <th>Nickname</th>
+                            <th>Logo</th>
+                            <th>State</th>
+                            <th>Conference</th>
+                            <th>Colors</th>
+                        </tr>
+                    </thead>
+                    <tbody style="text-align: center;">
+                        <tr th:each="team : ${teams}" class="selectable" th:attr="onclick=|teamInfo('${team.code}')|">
+                            <td th:text="${team.school}" class="font-md"></td>
+                            <td th:text="${team.nickname}" class="font-md"></td>
+                            <td>
+                                <img th:src="${logos.get(team.code)}" class="logo">
+                            </td>
+                            <td th:text="${team.state}"></td>
+                            <td th:text="${team.conference}"></td>
+                            <td>
+                                <div class="d-flex flex-row justify-content-center align-items-center w-100 h-100">
+                                    <div th:each="color : ${team.colors}" th:style="|background-color: @{${color}}; width: 30px; aspect-ratio: 1/1; border : 1px solid black; margin: 5px;|"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <th:block th:replace="~{fragment/footer::footer}"></th:block>
+        </div>
+    </body>
+    <th:block th:replace="~{fragment/header::script}"></th:block>
+<script th:src="@{/js/cfb.js}"></script>
+</html>

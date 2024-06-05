@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.server.data.SportTeamApiResponse;
 import com.server.document.nfl.NFLTeam;
 import com.server.exception.NoRecordException;
-import com.server.exception.QueryParamException;
 import com.server.service.nfl.NFLTeamService;
 
 @RestController()
@@ -18,24 +18,19 @@ import com.server.service.nfl.NFLTeamService;
 public class NFLTeamController {
     @Autowired
     private NFLTeamService teamService;
-
-    @GetMapping("/all")
-    private List<NFLTeam> getAll() {
-        return teamService.findAll();
-    }
-
-    @GetMapping("/group")
-    private List<NFLTeam> getByGroup(
-        @RequestParam(name = "division", required = false) String division,
-        @RequestParam(name = "conference", required = false) String conference
-    ) throws QueryParamException {
-        return teamService.findByDivision(division, conference);
-    }
-
+    
     @GetMapping("/info")
-    private NFLTeam getByName(
-        @RequestParam(name = "code", required = false) String code
+    public SportTeamApiResponse<NFLTeam> getTeamInfo(
+        @RequestParam("code") String code
     ) throws NoRecordException {
-        return teamService.findByCode(code);
+    }
+    
+
+    @GetMapping("/list")
+    public List<SportTeamApiResponse<NFLTeam>> getTeamInfo(
+        @RequestParam(value = "page", required = false, defaultValue = "0") String code,
+        @RequestParam(value = "cnt", required = false, defaultValue = "0") String cnt
+    ) throws NoRecordException {
+
     }
 }

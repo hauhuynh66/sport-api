@@ -58,10 +58,6 @@ public class UploadStorageService implements IStorage {
             if(!directory.exists() || !directory.isDirectory()) {
                 directory.mkdirs();
             }
-
-            // int fileCount = directory.listFiles((dir, name)->
-            //         name.contains(file.getOriginalFilename())
-            // ).length;
             
             Path savePath = directory.toPath().resolve(time + "_" + file.getOriginalFilename());
 

@@ -1,5 +1,7 @@
 package com.server.document.nfl;
 
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -24,11 +26,9 @@ public class NFLTeam {
     private String code;
 
     @JsonIgnore
+    private String otherName;
+
     private String name;
-
-    private String fullName;
-
-    private String abbreviation;
 
     private String division;
 
@@ -36,13 +36,15 @@ public class NFLTeam {
 
     private int established;
 
-    public NFLTeam(String code ,String name, String fullName, String abbreviation, String division, String conference, int established) {
+    private List<String> colors;
+
+    public NFLTeam(String code ,String otherName, String name, String division, String conference, int established, List<String> colors) {
         this.code = code;
+        this.otherName = otherName;
         this.name = name;
-        this.fullName = fullName;
-        this.abbreviation = abbreviation;
         this.division = division;
         this.conference = conference;
         this.established = established;
+        this.colors = colors;
     }
 }
